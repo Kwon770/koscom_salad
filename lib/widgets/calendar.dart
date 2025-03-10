@@ -53,7 +53,7 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 600,
+      height: 540, // 캘린더의 전체 높이
       child: PageView.builder(
         controller: _calendarPageController,
         onPageChanged: onCalendarSwiped,
@@ -61,6 +61,7 @@ class _CalendarState extends State<Calendar> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 32),
                 const Row(

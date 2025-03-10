@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/widgets/calendar.dart';
+import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,11 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
-      body: Column(
-        children: [
-          Calendar(onDateChanged: onDateChanged),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Calendar(onDateChanged: onDateChanged),
+            const UpcomingSaladList(),
+          ],
+        ),
       ),
     );
   }
