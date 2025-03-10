@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
+import 'package:koscom_salad/widgets/appointment_dialog.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime) onDateChanged;
+  final Function(Map<String, dynamic>) onAppointmentCreate;
 
   const Calendar({
     super.key,
     required this.onDateChanged,
+    required this.onAppointmentCreate,
   });
 
   @override
@@ -48,6 +51,20 @@ class _CalendarState extends State<Calendar> {
       _calendarPageDay = _getDateFromIndex(index);
       widget.onDateChanged(_calendarPageDay);
     });
+  }
+
+  void _showAppointmentDialog(DateTime date) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      barrierDismissible: true,
+      builder: (context) {
+        return AppointmentDialog(
+          date: date,
+          onAppointmentCreate: widget.onAppointmentCreate,
+        );
+      },
+    );
   }
 
   @override
@@ -99,22 +116,25 @@ class _CalendarState extends State<Calendar> {
                       return const SizedBox.shrink();
                     }
 
-                    return Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(4),
-                          width: 36.5,
-                          height: 36.5,
-                          child: Image.asset(ImagePaths.saladMask),
-                        ),
-                        Text(
-                          day.toString(),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black.withOpacity(0.6),
+                    return GestureDetector(
+                      onTap: () => _showAppointmentDialog(date),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(4),
+                            width: 36.5,
+                            height: 36.5,
+                            child: Image.asset(ImagePaths.saladMask),
                           ),
-                        ),
-                      ],
+                          Text(
+                            day.toString(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),

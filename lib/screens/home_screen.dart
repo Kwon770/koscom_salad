@@ -12,11 +12,39 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DateTime _currentDate = DateTime.now();
+  final List<Map<String, dynamic>> _appointments = [
+    {
+      'date': '2024-01-15',
+      'name': '점심 약속',
+      'notifyOnPickup': true,
+      'notifyOnHome': true,
+    },
+    {
+      'date': '2024-01-16',
+      'name': '점심 약속',
+      'notifyOnPickup': true,
+      'notifyOnHome': true,
+    },
+    {
+      'date': '2024-01-17',
+      'name': '점심 약속',
+      'notifyOnPickup': true,
+      'notifyOnHome': true,
+    },
+  ];
 
   onDateChanged(DateTime date) {
     setState(() {
       _currentDate = date;
     });
+  }
+
+  void _createAppointment(Map<String, dynamic> appointmentData) {
+    setState(() {
+      _appointments.add(appointmentData);
+    });
+    // TODO: 실제 API 호출로 대체 예정
+    print('Created appointment: $appointmentData');
   }
 
   @override
@@ -51,8 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Calendar(onDateChanged: onDateChanged),
-            const UpcomingSaladList(),
+            Calendar(
+              onDateChanged: onDateChanged,
+              onAppointmentCreate: _createAppointment,
+            ),
+            UpcomingSaladList(appointments: _appointments),
           ],
         ),
       ),

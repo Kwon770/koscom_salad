@@ -1,52 +1,22 @@
 import 'package:flutter/material.dart';
 
 class UpcomingSaladList extends StatefulWidget {
-  const UpcomingSaladList({super.key});
+  const UpcomingSaladList({super.key, required this.appointments});
+
+  final List<Map<String, dynamic>> appointments;
 
   @override
   State<UpcomingSaladList> createState() => _UpcomingSaladListState();
 }
 
 class _UpcomingSaladListState extends State<UpcomingSaladList> {
-  // TODO: API 호출을 통해 실제 데이터로 교체 필요
-  final List<Map<String, dynamic>> _upcomingSalads = [
-    {
-      'date': '2024-01-15',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-16',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-17',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-15',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-16',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-17',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-15',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-16',
-      'name': '점심 약속',
-    },
-    {
-      'date': '2024-01-17',
-      'name': '점심 약속',
-    },
-  ];
+  late final List<Map<String, dynamic>> _upcomingSalads;
+
+  @override
+  void initState() {
+    super.initState();
+    _upcomingSalads = widget.appointments;
+  }
 
   @override
   Widget build(BuildContext context) {
