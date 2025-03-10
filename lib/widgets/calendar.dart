@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
+import 'package:koscom_salad/utils/dialog_utils.dart';
 import 'package:koscom_salad/widgets/appointment_dialog.dart';
 
 class Calendar extends StatefulWidget {
@@ -53,20 +54,6 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
-  void showAppointmentDialog(DateTime date) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black54,
-      barrierDismissible: true,
-      builder: (context) {
-        return AppointmentDialog(
-          date: date,
-          onAppointmentCreate: widget.onAppointmentCreate,
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -117,7 +104,7 @@ class _CalendarState extends State<Calendar> {
                     }
 
                     return GestureDetector(
-                      onTap: () => showAppointmentDialog(date),
+                      onTap: () => DialogUtils.showAppointmentEditDialog(context, date, widget.onAppointmentCreate),
                       child: Column(
                         children: [
                           Container(
