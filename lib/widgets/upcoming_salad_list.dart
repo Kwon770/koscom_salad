@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:koscom_salad/widgets/appointment_dialog.dart';
 
 class UpcomingSaladList extends StatefulWidget {
   const UpcomingSaladList({super.key, required this.appointments});
@@ -16,6 +18,24 @@ class _UpcomingSaladListState extends State<UpcomingSaladList> {
   void initState() {
     super.initState();
     _upcomingSalads = widget.appointments;
+  }
+
+  void showAppointmentDialog(DateTime date) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      barrierDismissible: true,
+      builder: (context) {
+        return AppointmentDialog(
+          date: date,
+          onAppointmentCreate: onAppointmentCreate,
+        );
+      },
+    );
+  }
+
+  void onAppointmentCreate(Map<String, dynamic> appointment) {
+    // MOCK
   }
 
   @override
@@ -43,17 +63,20 @@ class _UpcomingSaladListState extends State<UpcomingSaladList> {
               elevation: 2,
               margin: const EdgeInsets.symmetric(vertical: 8),
               color: Colors.white,
-              child: ListTile(
-                title: Text(
-                  salad['name'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+              child: GestureDetector(
+                onTap: () => showAppointmentDialog(salad['date']),
+                child: ListTile(
+                  title: Text(
+                    salad['name'],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                subtitle: Text(
-                  '예약일: ${salad['date']}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
+                  subtitle: Text(
+                    '예약일: ${DateFormat('yyyy-MM-dd').format(salad['date'])}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ),
               ),

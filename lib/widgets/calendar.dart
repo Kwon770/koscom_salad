@@ -28,7 +28,7 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     _calendarPageController = PageController(initialPage: initialPage);
-    _calendarPageDay = _getDateFromIndex(initialPage);
+    _calendarPageDay = getDateFromIndex(initialPage);
 
     // build 완료 후 콜백 호출
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -36,7 +36,7 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
-  DateTime _getDateFromIndex(int index) {
+  DateTime getDateFromIndex(int index) {
     // initialPage를 기준으로 상대적인 월 계산
     final monthDiff = index - initialPage;
     return DateTime(
@@ -48,12 +48,12 @@ class _CalendarState extends State<Calendar> {
 
   onCalendarSwiped(int index) {
     setState(() {
-      _calendarPageDay = _getDateFromIndex(index);
+      _calendarPageDay = getDateFromIndex(index);
       widget.onDateChanged(_calendarPageDay);
     });
   }
 
-  void _showAppointmentDialog(DateTime date) {
+  void showAppointmentDialog(DateTime date) {
     showDialog(
       context: context,
       barrierColor: Colors.black54,
@@ -117,7 +117,7 @@ class _CalendarState extends State<Calendar> {
                     }
 
                     return GestureDetector(
-                      onTap: () => _showAppointmentDialog(date),
+                      onTap: () => showAppointmentDialog(date),
                       child: Column(
                         children: [
                           Container(

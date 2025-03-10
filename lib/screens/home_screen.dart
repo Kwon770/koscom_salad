@@ -14,19 +14,19 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _currentDate = DateTime.now();
   final List<Map<String, dynamic>> _appointments = [
     {
-      'date': '2024-01-15',
+      'date': DateTime(2024, 1, 15),
       'name': '점심 약속',
       'notifyOnPickup': true,
       'notifyOnHome': true,
     },
     {
-      'date': '2024-01-16',
+      'date': DateTime(2024, 1, 16),
       'name': '점심 약속',
       'notifyOnPickup': true,
       'notifyOnHome': true,
     },
     {
-      'date': '2024-01-17',
+      'date': DateTime(2024, 1, 17),
       'name': '점심 약속',
       'notifyOnPickup': true,
       'notifyOnHome': true,
