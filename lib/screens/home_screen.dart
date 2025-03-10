@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
+import 'package:koscom_salad/screens/setting_screen.dart';
 import 'package:koscom_salad/widgets/calendar.dart';
 import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
 
@@ -68,7 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingScreen()),
+              );
+            },
             color: Colors.black,
           ),
         ],
