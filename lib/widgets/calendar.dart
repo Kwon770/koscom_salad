@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
-import 'package:koscom_salad/widgets/appointment_dialog.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime) onDateChanged;
@@ -86,7 +85,7 @@ class _CalendarState extends State<Calendar> {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 7,
-                    childAspectRatio: 1,
+                    childAspectRatio: 0.89,
                     mainAxisSpacing: 12, // 세로 방향 간격
                     // crossAxisSpacing: 8, // 가로 방향 간격
                   ),
