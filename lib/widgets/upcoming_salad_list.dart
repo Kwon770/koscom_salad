@@ -28,14 +28,9 @@ class _UpcomingSaladListState extends State<UpcomingSaladList> {
       builder: (context) {
         return AppointmentDialog(
           date: date,
-          onAppointmentCreate: onAppointmentCreate,
         );
       },
     );
-  }
-
-  void onAppointmentCreate(Map<String, dynamic> appointment) {
-    // MOCK
   }
 
   @override

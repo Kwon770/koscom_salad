@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:koscom_salad/services/appointment_service.dart';
+import 'package:koscom_salad/services/dto/appointment_dto.dart';
 
 class AppointmentDialog extends StatelessWidget {
   final DateTime date;
-  final Function(Map<String, dynamic>) onAppointmentCreate;
   String appointmentName = '점심 약속';
   bool notifyOnPickup = true;
   bool notifyOnHome = true;
 
-  AppointmentDialog({super.key, required this.date, required this.onAppointmentCreate});
+  AppointmentDialog({super.key, required this.date});
+
+  onSaveButtonPressed(BuildContext context) {
+    print(AppointmentService.createAppointment(AppointmentDto(
+      title: appointmentName,
+      date: date,
+      notifyOnPickup: notifyOnPickup,
+      notifyOnHome: notifyOnHome,
+    )));
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +115,7 @@ class AppointmentDialog extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      onAppointmentCreate({
-                        'name': appointmentName,
-                        'date': date.toString().split(' ')[0],
-                        'notifyOnPickup': notifyOnPickup,
-                        'notifyOnHome': notifyOnHome,
-                      });
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => onSaveButtonPressed(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF17522F),
                       shape: RoundedRectangleBorder(
@@ -119,8 +123,7 @@ class AppointmentDialog extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('저장',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: const Text('저장', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

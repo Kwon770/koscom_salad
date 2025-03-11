@@ -40,14 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _createAppointment(Map<String, dynamic> appointmentData) {
-    setState(() {
-      _appointments.add(appointmentData);
-    });
-    // TODO: 실제 API 호출로 대체 예정
-    print('Created appointment: $appointmentData');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Calendar(
               onDateChanged: onDateChanged,
-              onAppointmentCreate: _createAppointment,
             ),
             UpcomingSaladList(appointments: _appointments),
           ],
