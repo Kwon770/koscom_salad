@@ -3,6 +3,7 @@ import 'package:koscom_salad/main.dart';
 import 'package:koscom_salad/widgets/appointment_dialog.dart';
 import 'package:koscom_salad/widgets/yes_or_no_dialog.dart';
 import 'package:koscom_salad/widgets/alert_dialog.dart';
+import 'package:koscom_salad/widgets/simple_input_dialog.dart';
 
 class DialogUtils {
   DialogUtils._();
@@ -75,5 +76,31 @@ class DialogUtils {
         ],
       ),
     );
+  }
+
+  static Future<String?> showSimpleInput({
+    required String title,
+    required String hintText,
+    required String submitText,
+    String closeText = '닫기',
+    int maxLines = 1,
+  }) async {
+    final controller = TextEditingController();
+
+    final result = await showDialog<String?>(
+      context: _context,
+      barrierColor: Colors.black54,
+      builder: (context) => SimpleInputDialog(
+        title: title,
+        hintText: hintText,
+        submitText: submitText,
+        closeText: closeText,
+        maxLines: maxLines,
+        controller: controller,
+      ),
+    );
+
+    controller.clear();
+    return result;
   }
 }

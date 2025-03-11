@@ -51,7 +51,8 @@ iOS version: ${iosInfo.systemVersion}
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'content': '''
-[SUPABASE ERROR : $now]
+[Supabase Error : $now]
+
 $error
 
 DTO ----------------------
@@ -62,6 +63,35 @@ ${data['user_id']}
 
 Device Info ----------------------
 $deviceInfo
+----------------------------------
+
+          '''
+        }),
+      );
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<void> sendFeedbackToDiscord(String feedback) async {
+    final deviceInfo = await getDeviceInfo();
+    final now = DateTime.now().toIso8601String();
+    final webhookUrl = dotenv.env['DISCORD_WEBHOOK_FEEDBACK_URL']!;
+
+    final client = http.Client();
+    try {
+      await client.post(
+        Uri.parse(webhookUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'content': '''
+[피드백 접수 : $now]
+
+$feedback
+
+Device Info ----------------------
+$deviceInfo
+----------------------------------
 
           '''
         }),
