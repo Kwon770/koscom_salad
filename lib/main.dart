@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/screens/home_screen.dart';
+import 'package:koscom_salad/screens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:koscom_salad/theme.dart';
 
 Future<void> main() async {
+  // 비동기 작업 우선 수행
+  WidgetsFlutterBinding.ensureInitialized();
+
   // 환경변수 로드
   await dotenv.load(fileName: ".env");
 
@@ -36,7 +41,17 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey, // 전역 navigator key 설정
       theme: materialTheme.light(), // 라이트 테마
       darkTheme: materialTheme.dark(), // 다크 테마
-      home: const HomeScreen(),
+      home: FutureBuilder<String?>(
+        future: SharedPreferences.getInstance().then((prefs) => prefs.getString('userId')),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // userId가 없으면 온보딩 화면으로
+          return snapshot.hasData ? const HomeScreen() : const OnboardingScreen();
+        },
+      ),
     );
   }
 }

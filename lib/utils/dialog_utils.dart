@@ -60,11 +60,13 @@ class DialogUtils {
     );
   }
 
-  static Future<void> showErrorDialog() async {
+  static Future<void> showErrorDialog(String? message) async {
+    final errorMessage = message ?? '서버 에러가 발생했습니다. 잠시 후 다시 시도해주세요';
+
     await showDialog(
       context: _context,
       builder: (context) => AlertDialog(
-        content: const Text('서버 에러가 발생했습니다. 잠시 후 다시 시도해주세요'),
+        content: Text(errorMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

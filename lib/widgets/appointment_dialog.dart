@@ -11,12 +11,12 @@ class AppointmentDialog extends StatelessWidget {
   AppointmentDialog({super.key, required this.date});
 
   onSaveButtonPressed(BuildContext context) {
-    print(AppointmentService.createAppointment(AppointmentDto(
+    AppointmentService.createAppointment(AppointmentDto(
       title: appointmentName,
       date: date,
       notifyOnPickup: notifyOnPickup,
       notifyOnHome: notifyOnHome,
-    )));
+    ));
 
     Navigator.pop(context);
   }

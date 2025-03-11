@@ -20,7 +20,7 @@ class YesOrNoDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 80),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 25),
         child: Column(
