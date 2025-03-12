@@ -1,6 +1,7 @@
 import 'package:koscom_salad/main.dart';
 import 'package:koscom_salad/services/dto/appointment_dto.dart';
 import 'package:koscom_salad/services/models/appointment_model.dart';
+import 'package:koscom_salad/services/salad_service.dart';
 import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/service_utils.dart';
 
@@ -9,7 +10,15 @@ class AppointmentService {
 
   static Future<void> createAppointment(AppointmentDto appointmentDto) async {
     try {
-      await supabase.from('appointment').insert(appointmentDto.toJson());
+      final String createdAppointmentId = await supabase
+          .from('appointment')
+          .insert(appointmentDto.toJson())
+          .select()
+          .single()
+          .then((value) => value['id']);
+
+      // 후처리로 샐러드 생성
+      await SaladService.createSalad(appointmentDto.userId, createdAppointmentId);
     } catch (e) {
       await ServiceUtils.handleException(e, appointmentDto.toJson());
     }
@@ -37,6 +46,9 @@ class AppointmentService {
   static Future<void> deleteAppointment(String appointmentId) async {
     try {
       await supabase.from('appointment').delete().eq('id', appointmentId);
+
+      // 후처리로 샐러드 삭제
+      await SaladService.deleteSalad(appointmentId);
     } catch (e) {
       await ServiceUtils.handleException(e, {'id': appointmentId});
     }
