@@ -10,16 +10,20 @@ class DialogUtils {
 
   static BuildContext get _context => navigatorKey.currentContext!;
 
-  static void showAppointmentCreateDialog(DateTime date) {
+  static void showAppointmentCreateDialog(DateTime date, {VoidCallback? onComplete}) {
     showDialog(
       context: _context,
       barrierColor: Colors.black54,
       barrierDismissible: true,
-      builder: (context) => AppointmentDialog(date: date, isCreate: true),
+      builder: (context) => AppointmentDialog(
+        date: date,
+        isCreate: true,
+        onComplete: onComplete,
+      ),
     );
   }
 
-  static void showAppointmentUpdateDialog(DateTime date, String appointmentId) {
+  static void showAppointmentEditDialog(DateTime date, String appointmentId, {VoidCallback? onComplete}) {
     showDialog(
       context: _context,
       barrierColor: Colors.black54,
@@ -28,6 +32,7 @@ class DialogUtils {
         date: date,
         isCreate: false,
         appointmentId: appointmentId,
+        onComplete: onComplete,
       ),
     );
   }

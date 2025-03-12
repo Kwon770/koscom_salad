@@ -46,7 +46,7 @@ class AppointmentService {
     try {
       final userId = await AuthUtils.getUserId();
       final response =
-          await supabase.from('appointment').select('*').eq('user_id', userId).order('date', ascending: false);
+          await supabase.from('appointment').select('*').eq('user_id', userId).order('date', ascending: true);
 
       return response.map((json) => AppointmentModel.fromJson(json)).toList();
     } catch (e) {

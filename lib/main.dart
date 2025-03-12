@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:koscom_salad/screens/home_screen.dart';
 import 'package:koscom_salad/screens/onboarding_screen.dart';
 import 'package:koscom_salad/utils/auth_utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:koscom_salad/theme.dart';

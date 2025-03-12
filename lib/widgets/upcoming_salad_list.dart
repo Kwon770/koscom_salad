@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:koscom_salad/services/appointment_service.dart';
 import 'package:koscom_salad/services/models/appointment_model.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 
 class UpcomingSaladList extends StatelessWidget {
-  const UpcomingSaladList({super.key});
+  final Future<List<AppointmentModel>> appointmentsFuture;
+  final VoidCallback onAppointmentModified;
+
+  const UpcomingSaladList({
+    super.key,
+    required this.appointmentsFuture,
+    required this.onAppointmentModified,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +28,13 @@ class UpcomingSaladList extends StatelessWidget {
           ),
         ),
         FutureBuilder<List<AppointmentModel>>(
-          future: AppointmentService.getAppointments(),
+          future: appointmentsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
             final appointments = snapshot.data ?? [];
-            print('appointments : $appointments');
 
             if (snapshot.hasError || appointments.isEmpty) {
               return const Padding(
@@ -64,7 +69,13 @@ class UpcomingSaladList extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 8),
           color: Colors.white,
           child: GestureDetector(
-            onTap: () => DialogUtils.showAppointmentCreateDialog(appointment.date),
+            onTap: () {
+              DialogUtils.showAppointmentEditDialog(
+                appointment.date,
+                appointment.id,
+                onComplete: onAppointmentModified,
+              );
+            },
             child: ListTile(
               title: Text(
                 appointment.title,

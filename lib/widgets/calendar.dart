@@ -4,10 +4,12 @@ import 'package:koscom_salad/utils/dialog_utils.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime) onDateChanged;
+  final VoidCallback onAppointmentCreated;
 
   const Calendar({
     super.key,
     required this.onDateChanged,
+    required this.onAppointmentCreated,
   });
 
   @override
@@ -101,7 +103,10 @@ class _CalendarState extends State<Calendar> {
                     }
 
                     return GestureDetector(
-                      onTap: () => DialogUtils.showAppointmentCreateDialog(date),
+                      onTap: () => DialogUtils.showAppointmentCreateDialog(
+                        date,
+                        onComplete: widget.onAppointmentCreated,
+                      ),
                       child: Column(
                         children: [
                           Container(

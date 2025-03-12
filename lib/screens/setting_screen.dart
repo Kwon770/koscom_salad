@@ -5,7 +5,6 @@ import 'package:koscom_salad/utils/webhook_agent.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 import 'package:koscom_salad/main.dart';
 import 'package:koscom_salad/screens/onboarding_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});

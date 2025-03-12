@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/screens/setting_screen.dart';
+import 'package:koscom_salad/services/models/appointment_model.dart';
 import 'package:koscom_salad/widgets/calendar.dart';
 import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
+import 'package:koscom_salad/services/appointment_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,28 +15,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DateTime _currentDate = DateTime.now();
-  final List<Map<String, dynamic>> _appointments = [
-    {
-      'date': DateTime(2024, 1, 15),
-      'name': '점심 약속',
-      'notifyOnPickup': true,
-      'notifyOnHome': true,
-    },
-    {
-      'date': DateTime(2024, 1, 16),
-      'name': '점심 약속',
-      'notifyOnPickup': true,
-      'notifyOnHome': true,
-    },
-    {
-      'date': DateTime(2024, 1, 17),
-      'name': '점심 약속',
-      'notifyOnPickup': true,
-      'notifyOnHome': true,
-    },
-  ];
+  late Future<List<AppointmentModel>> _appointmentsFuture;
 
-  onDateChanged(DateTime date) {
+  @override
+  void initState() {
+    super.initState();
+    _appointmentsFuture = AppointmentService.getAppointments();
+  }
+
+  void refreshAppointments() {
+    setState(() {
+      _appointmentsFuture = AppointmentService.getAppointments();
+    });
+  }
+
+  void onDateChanged(DateTime date) {
     setState(() {
       _currentDate = date;
     });
@@ -79,8 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Calendar(
               onDateChanged: onDateChanged,
+              onAppointmentCreated: refreshAppointments,
             ),
-            const UpcomingSaladList(),
+            UpcomingSaladList(
+              appointmentsFuture: _appointmentsFuture,
+              onAppointmentModified: refreshAppointments,
+            ),
           ],
         ),
       ),

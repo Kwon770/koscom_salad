@@ -8,12 +8,14 @@ class AppointmentDialog extends StatefulWidget {
   final DateTime date;
   final bool isCreate;
   final String? appointmentId;
+  final VoidCallback? onComplete;
 
   const AppointmentDialog({
     super.key,
     required this.date,
     required this.isCreate,
     this.appointmentId,
+    this.onComplete,
   });
 
   @override
@@ -62,7 +64,9 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       await AppointmentService.updateAppointment(widget.appointmentId!, dto);
     }
 
-    if (mounted) Navigator.pop(context);
+    if (!mounted) return;
+    widget.onComplete?.call();
+    Navigator.pop(context);
   }
 
   Future<void> onDeleteButtonPressed(BuildContext context) async {
@@ -77,7 +81,9 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     if (!confirmed || !mounted) return;
 
     await AppointmentService.deleteAppointment(widget.appointmentId!);
-    if (mounted) Navigator.pop(context);
+    if (!mounted) return;
+    widget.onComplete?.call();
+    Navigator.pop(context);
   }
 
   @override
@@ -129,7 +135,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     const SizedBox(height: 16),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 신청 알림 (전일 16:49)'),
+                      title: const Text('샐러드 신청 알림 \n(전일 16:49)'),
                       trailing: Switch.adaptive(
                         value: notifyOnApply,
                         onChanged: (value) {
@@ -141,7 +147,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 픽업 알림 (당일 12:19)'),
+                      title: const Text('샐러드 픽업 알림 \n(당일 12:19)'),
                       trailing: Switch.adaptive(
                         value: notifyOnPickup,
                         onChanged: (value) {
@@ -153,7 +159,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 챙기기 알림 (당일 17:39)'),
+                      title: const Text('샐러드 챙기기 알림 \n(당일 17:39)'),
                       trailing: Switch.adaptive(
                         value: notifyOnHome,
                         onChanged: (value) {
