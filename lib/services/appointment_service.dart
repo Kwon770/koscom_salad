@@ -15,6 +15,17 @@ class AppointmentService {
     }
   }
 
+  static Future<AppointmentModel?> getAppointment(String appointmentId) async {
+    try {
+      final response = await supabase.from('appointment').select('*').eq('id', appointmentId).single();
+
+      return AppointmentModel.fromJson(response);
+    } catch (e) {
+      await ServiceUtils.handleException(e, {'id': appointmentId});
+      return null;
+    }
+  }
+
   static Future<void> updateAppointment(String appointmentId, AppointmentDto appointmentDto) async {
     try {
       await supabase.from('appointment').update(appointmentDto.toJson()).eq('id', appointmentId);

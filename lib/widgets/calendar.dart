@@ -101,7 +101,7 @@ class _CalendarState extends State<Calendar> {
                     }
 
                     return GestureDetector(
-                      onTap: () => DialogUtils.showAppointmentEditDialog(date),
+                      onTap: () => DialogUtils.showAppointmentCreateDialog(date),
                       child: Column(
                         children: [
                           Container(

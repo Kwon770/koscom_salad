@@ -64,7 +64,7 @@ class UpcomingSaladList extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 8),
           color: Colors.white,
           child: GestureDetector(
-            onTap: () => DialogUtils.showAppointmentEditDialog(appointment.date),
+            onTap: () => DialogUtils.showAppointmentCreateDialog(appointment.date),
             child: ListTile(
               title: Text(
                 appointment.title,

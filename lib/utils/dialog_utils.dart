@@ -10,12 +10,25 @@ class DialogUtils {
 
   static BuildContext get _context => navigatorKey.currentContext!;
 
-  static void showAppointmentEditDialog(DateTime date) {
+  static void showAppointmentCreateDialog(DateTime date) {
     showDialog(
       context: _context,
       barrierColor: Colors.black54,
       barrierDismissible: true,
-      builder: (context) => AppointmentDialog(date: date),
+      builder: (context) => AppointmentDialog(date: date, isCreate: true),
+    );
+  }
+
+  static void showAppointmentUpdateDialog(DateTime date, String appointmentId) {
+    showDialog(
+      context: _context,
+      barrierColor: Colors.black54,
+      barrierDismissible: true,
+      builder: (context) => AppointmentDialog(
+        date: date,
+        isCreate: false,
+        appointmentId: appointmentId,
+      ),
     );
   }
 
