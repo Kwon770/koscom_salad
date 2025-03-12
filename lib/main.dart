@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/screens/home_screen.dart';
 import 'package:koscom_salad/screens/onboarding_screen.dart';
+import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
       theme: materialTheme.light(), // 라이트 테마
       darkTheme: materialTheme.dark(), // 다크 테마
       home: FutureBuilder<String?>(
-        future: SharedPreferences.getInstance().then((prefs) => prefs.getString('userId')),
+        future: AuthUtils.getUserId(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

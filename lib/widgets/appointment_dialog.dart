@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/services/appointment_service.dart';
 import 'package:koscom_salad/services/dto/appointment_dto.dart';
+import 'package:koscom_salad/utils/auth_utils.dart';
 
-class AppointmentDialog extends StatelessWidget {
+class AppointmentDialog extends StatefulWidget {
   final DateTime date;
+
+  const AppointmentDialog({super.key, required this.date});
+
+  @override
+  State<AppointmentDialog> createState() => _AppointmentDialogState();
+}
+
+class _AppointmentDialogState extends State<AppointmentDialog> {
   String appointmentName = '점심 약속';
   bool notifyOnPickup = true;
   bool notifyOnHome = true;
 
-  AppointmentDialog({super.key, required this.date});
-
-  onSaveButtonPressed(BuildContext context) {
-    AppointmentService.createAppointment(AppointmentDto(
+  Future<void> onSaveButtonPressed(BuildContext context) async {
+    await AppointmentService.createAppointment(AppointmentDto(
       title: appointmentName,
-      date: date,
+      date: widget.date,
       notifyOnPickup: notifyOnPickup,
       notifyOnHome: notifyOnHome,
+      userId: await AuthUtils.getUserId(),
     ));
 
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override

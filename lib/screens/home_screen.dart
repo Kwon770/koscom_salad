@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Calendar(
               onDateChanged: onDateChanged,
             ),
-            UpcomingSaladList(appointments: _appointments),
+            const UpcomingSaladList(),
           ],
         ),
       ),

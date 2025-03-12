@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/services/user_service.dart';
+import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/webhook_agent.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 import 'package:koscom_salad/main.dart';
@@ -81,13 +82,14 @@ class _SettingScreenState extends State<SettingScreen> {
 
     if (!confirmed) return;
     await UserService.deleteUserSoftly();
+    await AuthUtils.removeUserId();
 
-    if (!mounted) return;
-    SharedPreferences.getInstance().then((prefs) => prefs.remove('userId'));
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-      (route) => false,
-    );
+    if (mounted) {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        (route) => false,
+      );
+    }
   }
 
   @override

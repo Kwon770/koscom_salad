@@ -1,4 +1,5 @@
 import 'package:koscom_salad/main.dart';
+import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/service_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,8 +22,7 @@ class UserService {
   }
 
   static Future<String?> getUserName() async {
-    final userId = await SharedPreferences.getInstance().then((prefs) => prefs.getString('userId'));
-    if (userId == null) return null;
+    final userId = await AuthUtils.getUserId();
 
     try {
       final response = await supabase.from('user').select('name').eq('id', userId).single();
@@ -35,8 +35,7 @@ class UserService {
   }
 
   static Future<void> changeUserName(String newName) async {
-    final userId = await SharedPreferences.getInstance().then((prefs) => prefs.getString('userId'));
-    if (userId == null) throw Exception('로그인이 필요합니다.');
+    final userId = await AuthUtils.getUserId();
 
     try {
       await supabase.from('user').update({'name': newName}).eq('id', userId);
@@ -47,8 +46,7 @@ class UserService {
   }
 
   static Future<void> deleteUserSoftly() async {
-    final userId = await SharedPreferences.getInstance().then((prefs) => prefs.getString('userId'));
-    if (userId == null) throw Exception('로그인이 필요합니다.');
+    final userId = await AuthUtils.getUserId();
 
     try {
       await supabase.from('user').update({'is_deleted': true}).eq('id', userId);
