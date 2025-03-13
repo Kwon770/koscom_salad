@@ -45,10 +45,10 @@ class AppointmentService {
 
   static Future<void> deleteAppointment(String appointmentId) async {
     try {
-      await supabase.from('appointment').delete().eq('id', appointmentId);
+      // 선처리로 샐러드 삭제
+      await SaladService.deleteSaladByAppointmentId(appointmentId);
 
-      // 후처리로 샐러드 삭제
-      await SaladService.deleteSalad(appointmentId);
+      await supabase.from('appointment').delete().eq('id', appointmentId);
     } catch (e) {
       await ServiceUtils.handleException(e, {'id': appointmentId});
     }

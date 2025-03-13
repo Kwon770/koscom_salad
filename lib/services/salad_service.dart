@@ -59,7 +59,7 @@ class SaladService {
     }
   }
 
-  static Future<void> deleteSalad(String appointmentId) async {
+  static Future<void> deleteSaladByAppointmentId(String appointmentId) async {
     try {
       await supabase.from('salad').delete().eq('appointment_id', appointmentId);
     } catch (e) {
