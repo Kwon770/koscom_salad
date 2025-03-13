@@ -135,7 +135,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     const SizedBox(height: 16),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 신청 알림 \n(전일 16:49)'),
+                      title: const Text('샐러드 신청 알림 \n(전일 16:48)'),
                       trailing: Switch.adaptive(
                         value: notifyOnApply,
                         onChanged: (value) {
@@ -147,7 +147,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 픽업 알림 \n(당일 12:19)'),
+                      title: const Text('샐러드 픽업 알림 \n(당일 12:20)'),
                       trailing: Switch.adaptive(
                         value: notifyOnPickup,
                         onChanged: (value) {
@@ -159,7 +159,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 챙기기 알림 \n(당일 17:39)'),
+                      title: const Text('샐러드 챙기기 알림 \n(당일 17:40)'),
                       trailing: Switch.adaptive(
                         value: notifyOnHome,
                         onChanged: (value) {
