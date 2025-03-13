@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
+import 'package:koscom_salad/constants/salad_state.dart';
+import 'package:koscom_salad/services/models/salad_model.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime) onDateChanged;
   final VoidCallback onAppointmentCreated;
+  final Future<List<SaladModel>> saladsFuture;
 
   const Calendar({
     super.key,
+    required this.saladsFuture,
     required this.onDateChanged,
     required this.onAppointmentCreated,
   });
@@ -46,7 +50,7 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  onCalendarSwiped(int index) {
+  _onCalendarSwiped(int index) {
     setState(() {
       _calendarPageDay = getDateFromIndex(index);
       widget.onDateChanged(_calendarPageDay);
@@ -59,7 +63,7 @@ class _CalendarState extends State<Calendar> {
       height: 540, // 캘린더의 전체 높이
       child: PageView.builder(
         controller: _calendarPageController,
-        onPageChanged: onCalendarSwiped,
+        onPageChanged: _onCalendarSwiped,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -80,51 +84,15 @@ class _CalendarState extends State<Calendar> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7,
-                    childAspectRatio: 0.89,
-                    mainAxisSpacing: 12, // 세로 방향 간격
-                    // crossAxisSpacing: 8, // 가로 방향 간격
-                  ),
-                  itemCount: 42,
-                  itemBuilder: (context, index) {
-                    final firstDay = DateTime(_calendarPageDay.year, _calendarPageDay.month, 1);
-                    final lastDay = DateTime(_calendarPageDay.year, _calendarPageDay.month + 1, 0);
-                    final firstWeekday = firstDay.weekday;
-                    final day = index - (firstWeekday - 1);
-                    final date = DateTime(_calendarPageDay.year, _calendarPageDay.month, day);
-
-                    // 1일 이전이거나 이번 달의 마지막 날 이후면 빈 공간을 반환
-                    if (day < 1 || date.isAfter(lastDay)) {
-                      return const SizedBox.shrink();
+                FutureBuilder<List<SaladModel>>(
+                  future: widget.saladsFuture,
+                  builder: (context, snapshot) {
+                    print(snapshot.data);
+                    if (snapshot.hasData) {
+                      return _makeCalendar(snapshot.data!);
                     }
-
-                    return GestureDetector(
-                      onTap: () => DialogUtils.showAppointmentCreateDialog(
-                        date,
-                        onComplete: widget.onAppointmentCreated,
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(4),
-                            width: 36.5,
-                            height: 36.5,
-                            child: Image.asset(ImagePaths.saladMask),
-                          ),
-                          Text(
-                            day.toString(),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black.withOpacity(0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                    print(snapshot.error);
+                    return const SizedBox.shrink();
                   },
                 ),
               ],
@@ -133,5 +101,144 @@ class _CalendarState extends State<Calendar> {
         },
       ),
     );
+  }
+
+  GridView _makeCalendar(List<SaladModel> salads) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        childAspectRatio: 0.89,
+        mainAxisSpacing: 12, // 세로 방향 간격
+        // crossAxisSpacing: 8, // 가로 방향 간격
+      ),
+      itemCount: 42,
+      itemBuilder: (context, index) {
+        final firstDay = DateTime(_calendarPageDay.year, _calendarPageDay.month, 1);
+        final lastDay = DateTime(_calendarPageDay.year, _calendarPageDay.month + 1, 0);
+        final firstWeekday = firstDay.weekday;
+        final day = index - (firstWeekday - 1);
+        final date = DateTime(_calendarPageDay.year, _calendarPageDay.month, day);
+
+        // 1일 이전이거나 이번 달의 마지막 날 이후면 빈 공간을 반환
+        if (day < 1 || date.isAfter(lastDay)) {
+          return const SizedBox.shrink();
+        }
+
+        final SaladModel? salad = salads
+            .where((s) => s.date.year == date.year && s.date.month == date.month && s.date.day == date.day)
+            .firstOrNull;
+
+        return _makeCell(date, salad);
+      },
+    );
+  }
+
+  Widget _makeCell(DateTime date, SaladModel? salad) {
+    final isPastDate = date.isBefore(DateTime.now());
+    const size = 36.0;
+
+    // 과거 날짜이고 예약된 샐러드가 없는 경우
+    if (isPastDate && salad == null) {
+      final icon = _buildSaladImage(
+        size: size,
+        filterColor: const Color(0xfff4f4f4),
+        blendMode: BlendMode.srcIn,
+      );
+      return _buildCell(icon, date);
+    }
+
+    // 미래 날짜이고 예약된 샐러드가 없는 경우
+    if (!isPastDate && salad == null) {
+      final icon = _buildSaladImage(
+        size: size,
+        opacity: 0.3,
+      );
+      return _buildCell(
+        icon,
+        date,
+        onTap: () => DialogUtils.showAppointmentCreateDialog(
+          date,
+          onComplete: widget.onAppointmentCreated,
+        ),
+      );
+    }
+
+    // 예약된 샐러드가 있는 경우
+    final icon = _buildSaladImage(
+      size: size,
+      filterColor: salad?.state == SaladState.spoiled ? const Color.fromARGB(255, 162, 1, 206) : null,
+      blendMode: salad?.state == SaladState.spoiled ? BlendMode.modulate : null,
+    );
+
+    return _buildCell(
+      icon,
+      date,
+      onTap: !isPastDate
+          ? () => DialogUtils.showAppointmentEditDialog(
+                date,
+                salad!.appointmentId,
+                onComplete: widget.onAppointmentCreated,
+              )
+          : null,
+    );
+  }
+
+  // 날짜 텍스트 위젯 생성
+  Widget _buildDateText(DateTime date, double fontSize) {
+    return Text(
+      date.day.toString(),
+      style: TextStyle(
+        fontSize: fontSize,
+        color: Colors.black.withOpacity(0.6),
+      ),
+    );
+  }
+
+  // 샐러드 아이콘 위젯 생성
+  Widget _buildSaladImage({
+    required double size,
+    double opacity = 1.0,
+    Color? filterColor,
+    BlendMode? blendMode,
+  }) {
+    Widget icon = Image.asset(ImagePaths.salad);
+
+    if (filterColor != null && blendMode != null) {
+      icon = ColorFiltered(
+        colorFilter: ColorFilter.mode(filterColor, blendMode),
+        child: icon,
+      );
+    }
+
+    if (opacity != 1.0) {
+      icon = Opacity(opacity: opacity, child: icon);
+    }
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: icon,
+    );
+  }
+
+  // 날짜 셀 컨테이너 생성
+  Widget _buildCell(Widget icon, DateTime date, {VoidCallback? onTap}) {
+    Widget content = Column(
+      children: [
+        icon,
+        _buildDateText(date, 12),
+      ],
+    );
+
+    if (onTap != null) {
+      content = GestureDetector(
+        onTap: onTap,
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

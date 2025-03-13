@@ -1,11 +1,13 @@
 import 'package:koscom_salad/main.dart';
+import 'package:koscom_salad/services/models/salad_model.dart';
+import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/service_utils.dart';
 
-// state
-// BOOKED
-// PICKED_UP
-// TAKE_HOME
-// SPOILED
+// saladState enum = state column table
+// booked
+// pickedUp
+// takeHome
+// spoiled
 
 class SaladService {
   SaladService._();
@@ -18,6 +20,26 @@ class SaladService {
       });
     } catch (e) {
       await ServiceUtils.handleException(e, {'user_id': userId, 'appointment_id': appointmentId});
+    }
+  }
+
+  static Future<List<SaladModel>> getSalads(int year, int month) async {
+    final String userId = await AuthUtils.getUserId();
+    final startDate = DateTime(year, month, 1);
+    final endDate = DateTime(year, month + 1, 0);
+
+    try {
+      final salads = await supabase
+          .from('salad')
+          .select('*, appointment!inner(date)')
+          .eq('appointment.user_id', userId)
+          .gte('appointment.date', startDate.toIso8601String())
+          .lte('appointment.date', endDate.toIso8601String());
+
+      return salads.map((salad) => SaladModel.fromJson(salad)).toList();
+    } catch (e) {
+      await ServiceUtils.handleException(e, {'user_id': userId, 'year': year, 'month': month});
+      return [];
     }
   }
 

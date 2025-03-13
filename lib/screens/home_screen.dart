@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/screens/setting_screen.dart';
 import 'package:koscom_salad/services/models/appointment_model.dart';
+import 'package:koscom_salad/services/models/salad_model.dart';
+import 'package:koscom_salad/services/salad_service.dart';
 import 'package:koscom_salad/widgets/calendar.dart';
 import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
 import 'package:koscom_salad/services/appointment_service.dart';
@@ -16,16 +18,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DateTime _currentDate = DateTime.now();
   late Future<List<AppointmentModel>> _appointmentsFuture;
+  late Future<List<SaladModel>> _saladsFuture;
 
   @override
   void initState() {
     super.initState();
     _appointmentsFuture = AppointmentService.getAppointments();
+    _saladsFuture = SaladService.getSalads(_currentDate.year, _currentDate.month);
   }
 
   void refreshAppointments() {
     setState(() {
       _appointmentsFuture = AppointmentService.getAppointments();
+      _saladsFuture = SaladService.getSalads(_currentDate.year, _currentDate.month);
     });
   }
 
@@ -73,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Calendar(
+              saladsFuture: _saladsFuture,
               onDateChanged: onDateChanged,
               onAppointmentCreated: refreshAppointments,
             ),
