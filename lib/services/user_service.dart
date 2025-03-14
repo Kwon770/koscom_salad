@@ -40,7 +40,18 @@ class UserService {
     try {
       await supabase.from('user').update({'name': newName}).eq('id', userId);
     } catch (e) {
-      await ServiceUtils.handleException(e, {'id': userId, 'name': newName}, '이름 변경 실패');
+      await ServiceUtils.handleException(e, {'id': userId, 'name': newName});
+      rethrow;
+    }
+  }
+
+  static Future<void> updateFCMToken(String fcmToken) async {
+    final userId = await AuthUtils.getUserId();
+
+    try {
+      await supabase.from('user').update({'fcm_token': fcmToken}).eq('id', userId);
+    } catch (e) {
+      await ServiceUtils.handleException(e, {'id': userId, 'fcmToken': fcmToken});
       rethrow;
     }
   }

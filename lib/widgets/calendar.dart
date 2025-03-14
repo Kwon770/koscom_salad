@@ -87,11 +87,10 @@ class _CalendarState extends State<Calendar> {
                 FutureBuilder<List<SaladModel>>(
                   future: widget.saladsFuture,
                   builder: (context, snapshot) {
-                    print(snapshot.data);
                     if (snapshot.hasData) {
                       return _makeCalendar(snapshot.data!);
                     }
-                    print(snapshot.error);
+
                     return const SizedBox.shrink();
                   },
                 ),
@@ -109,7 +108,7 @@ class _CalendarState extends State<Calendar> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
-        childAspectRatio: 0.89,
+        childAspectRatio: 0.95, // 캘린더 셀 간격 (셀 크기 비율)
         mainAxisSpacing: 12, // 세로 방향 간격
         // crossAxisSpacing: 8, // 가로 방향 간격
       ),

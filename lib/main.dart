@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:koscom_salad/firebase_options.dart';
 import 'package:koscom_salad/screens/home_screen.dart';
 import 'package:koscom_salad/screens/onboarding_screen.dart';
 import 'package:koscom_salad/utils/auth_utils.dart';
@@ -19,6 +21,10 @@ Future<void> main() async {
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseKey,
+  );
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   runApp(const MyApp());

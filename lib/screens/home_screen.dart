@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/screens/setting_screen.dart';
 import 'package:koscom_salad/services/models/appointment_model.dart';
 import 'package:koscom_salad/services/models/salad_model.dart';
 import 'package:koscom_salad/services/salad_service.dart';
+import 'package:koscom_salad/services/user_service.dart';
 import 'package:koscom_salad/widgets/calendar.dart';
 import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
 import 'package:koscom_salad/services/appointment_service.dart';
@@ -23,8 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _appointmentsFuture = AppointmentService.getAppointments();
-    _saladsFuture = SaladService.getSalads(_currentDate.year, _currentDate.month);
+
+    updateFCMToken();
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      updateFCMToken();
+    });
+
+    refreshAppointments();
   }
 
   void refreshAppointments() {
@@ -34,7 +43,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void onDateChanged(DateTime date) {
+  void updateFCMToken() async {
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    await FirebaseMessaging.instance.getAPNSToken();
+    final String? fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken == null) {
+      return;
+    }
+
+    await UserService.updateFCMToken(fcmToken);
+  }
+
+  void _onDateChanged(DateTime date) {
     setState(() {
       _currentDate = date;
     });
@@ -79,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Calendar(
               saladsFuture: _saladsFuture,
-              onDateChanged: onDateChanged,
+              onDateChanged: _onDateChanged,
               onAppointmentCreated: refreshAppointments,
             ),
             UpcomingSaladList(
