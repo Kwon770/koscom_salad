@@ -1,13 +1,17 @@
+import 'dart:io';
+import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/services/appointment_service.dart';
 import 'package:koscom_salad/services/dto/appointment_dto.dart';
+import 'package:koscom_salad/services/salad_service.dart';
+import 'package:koscom_salad/utils/korean_date_utils.dart';
 import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 
 class AppointmentDialog extends StatefulWidget {
   final DateTime date;
   final bool isCreate;
-  final String? appointmentId;
+  final int? appointmentId;
   final VoidCallback? onComplete;
 
   const AppointmentDialog({
@@ -48,7 +52,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     }
   }
 
-  Future<void> onSaveButtonPressed(BuildContext context) async {
+  Future<void> _onSaveButtonPressed(BuildContext context) async {
     final dto = AppointmentDto(
       title: appointmentName,
       date: widget.date,
@@ -58,18 +62,81 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       userId: await AuthUtils.getUserId(),
     );
 
-    if (widget.isCreate) {
-      await AppointmentService.createAppointment(dto);
-    } else {
-      await AppointmentService.updateAppointment(widget.appointmentId!, dto);
-    }
+    final appointmentId = await saveAppointment(dto);
+    await saveAlarm(dto);
 
-    if (!mounted) return;
-    widget.onComplete?.call();
-    Navigator.pop(context);
+    if (mounted) {
+      widget.onComplete?.call();
+      Navigator.pop(context);
+    }
   }
 
-  Future<void> onDeleteButtonPressed(BuildContext context) async {
+  Future<void> saveAlarm(AppointmentDto dto) async {
+    final previousWorkday = await KoreanDateUtils.getPreviousWorkday(dto.date);
+    final applyAlarmSettings = AlarmSettings(
+      id: int.parse(
+          '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}1'),
+      dateTime: DateTime(previousWorkday.year, previousWorkday.month, previousWorkday.day, 16, 49),
+      notificationSettings: NotificationSettings(
+        title: '⏰ 샐러드 신청 알림',
+        body: '1분 뒤 샐러드 신청이 시작됩니다!',
+        stopButton: '알림 종료',
+      ),
+      vibrate: true,
+      warningNotificationOnKill: Platform.isIOS,
+      androidFullScreenIntent: true,
+      assetAudioPath: 'assets/audios/mute.mp3',
+    );
+
+    final pickupAlarmSettings = AlarmSettings(
+      id: int.parse(
+          '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}2'),
+      dateTime: DateTime(dto.date.year, dto.date.month, dto.date.day, 12, 20),
+      notificationSettings: NotificationSettings(
+        title: '🏃 샐러드 픽업 알림 제목',
+        body: '식당에서 샐러드 픽업해가세요!',
+        stopButton: '알림 종료',
+      ),
+      vibrate: true,
+      warningNotificationOnKill: Platform.isIOS,
+      androidFullScreenIntent: true,
+      assetAudioPath: 'assets/audios/mute.mp3',
+    );
+
+    final homeAlarmSettings = AlarmSettings(
+      id: int.parse(
+          '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}3'),
+      dateTime: DateTime(dto.date.year, dto.date.month, dto.date.day, 17, 39),
+      notificationSettings: NotificationSettings(
+        title: '🏠 샐러드 챙기기 알림 제목',
+        body: '샐러드 챙기기 알림 내용',
+      ),
+      vibrate: true,
+      warningNotificationOnKill: Platform.isIOS,
+      androidFullScreenIntent: true,
+      assetAudioPath: 'assets/audios/mute.mp3',
+    );
+
+    await Alarm.set(alarmSettings: applyAlarmSettings);
+    await Alarm.set(alarmSettings: pickupAlarmSettings);
+    await Alarm.set(alarmSettings: homeAlarmSettings);
+  }
+
+  Future<int> saveAppointment(AppointmentDto dto) async {
+    int appointmentId;
+
+    if (widget.isCreate) {
+      appointmentId = await AppointmentService.createAppointment(dto);
+      await SaladService.createSalad(dto.userId, appointmentId);
+    } else {
+      appointmentId = widget.appointmentId!;
+      await AppointmentService.updateAppointment(appointmentId, dto);
+    }
+
+    return appointmentId;
+  }
+
+  Future<void> _onDeleteButtonPressed(BuildContext context) async {
     final confirmed = await DialogUtils.showYesOrNoDialog(
       null,
       title: '약속 삭제',
@@ -80,10 +147,34 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
 
     if (!confirmed || !mounted) return;
 
+    await deleteAppointment();
+    await deleteAlarm();
+
+    if (mounted) {
+      widget.onComplete?.call();
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> deleteAlarm() async {
+    DateTime date = widget.date;
+    final previousWorkday = await KoreanDateUtils.getPreviousWorkday(date);
+
+    await Alarm.stop(
+      int.parse(
+          '${previousWorkday.year}${previousWorkday.month.toString().padLeft(2, '0')}${previousWorkday.day.toString().padLeft(2, '0')}1'),
+    );
+    await Alarm.stop(
+      int.parse('${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}2'),
+    );
+    await Alarm.stop(
+      int.parse('${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}3'),
+    );
+  }
+
+  Future<void> deleteAppointment() async {
+    await SaladService.deleteSaladByAppointmentId(widget.appointmentId!);
     await AppointmentService.deleteAppointment(widget.appointmentId!);
-    if (!mounted) return;
-    widget.onComplete?.call();
-    Navigator.pop(context);
   }
 
   @override
@@ -135,7 +226,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     const SizedBox(height: 16),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 신청 알림 \n(전일 16:48)'),
+                      title: const Text('샐러드 신청 알림 \n(전일 16:49)'),
                       trailing: Switch.adaptive(
                         value: notifyOnApply,
                         onChanged: (value) {
@@ -159,7 +250,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 챙기기 알림 \n(당일 17:40)'),
+                      title: const Text('샐러드 챙기기 알림 \n(당일 17:39)'),
                       trailing: Switch.adaptive(
                         value: notifyOnHome,
                         onChanged: (value) {
@@ -179,7 +270,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                 if (!widget.isCreate) ...[
                   Expanded(
                     child: TextButton(
-                      onPressed: () => onDeleteButtonPressed(context),
+                      onPressed: () => _onDeleteButtonPressed(context),
                       style: TextButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -208,7 +299,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => onSaveButtonPressed(context),
+                    onPressed: () => _onSaveButtonPressed(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF17522F),
                       shape: RoundedRectangleBorder(

@@ -4,7 +4,7 @@ import 'package:koscom_salad/utils/service_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
-  static Future<String> registerUser(String name) async {
+  static Future<int> registerUser(String name) async {
     try {
       final response = await supabase
           .from('user')
@@ -14,7 +14,7 @@ class UserService {
           .select()
           .single();
 
-      return response['id'] as String;
+      return response['id'] as int;
     } catch (e) {
       await ServiceUtils.handleException(e, {'name': name}, '유저 등록 실패');
       rethrow;

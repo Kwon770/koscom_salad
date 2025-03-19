@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/screens/home_screen.dart';
 import 'package:koscom_salad/services/user_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -22,10 +22,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     try {
       final userId = await UserService.registerUser(_nameController.text.trim());
-
-      // SharedPreferences에 userId 저장
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userId', userId);
+      await AuthUtils.setUserId(userId);
 
       if (!mounted) return;
 

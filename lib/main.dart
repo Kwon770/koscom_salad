@@ -1,3 +1,4 @@
+import 'package:alarm/alarm.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/firebase_options.dart';
@@ -27,6 +28,8 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await Alarm.init();
+
   runApp(const MyApp());
 }
 
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey, // 전역 navigator key 설정
       theme: materialTheme.light(), // 라이트 테마
       darkTheme: materialTheme.dark(), // 다크 테마
-      home: FutureBuilder<String?>(
+      home: FutureBuilder<int?>(
         future: AuthUtils.getUserId(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

@@ -23,7 +23,7 @@ class DialogUtils {
     );
   }
 
-  static void showAppointmentEditDialog(DateTime date, String appointmentId, {VoidCallback? onComplete}) {
+  static void showAppointmentEditDialog(DateTime date, int appointmentId, {VoidCallback? onComplete}) {
     showDialog(
       context: _context,
       barrierColor: Colors.black54,

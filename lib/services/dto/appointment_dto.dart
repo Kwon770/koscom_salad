@@ -4,7 +4,7 @@ class AppointmentDto {
   final bool notifyOnApply;
   final bool notifyOnPickup;
   final bool notifyOnHome;
-  final String userId;
+  final int userId;
 
   AppointmentDto({
     required this.title,

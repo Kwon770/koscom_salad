@@ -12,7 +12,7 @@ import 'package:koscom_salad/utils/service_utils.dart';
 class SaladService {
   SaladService._();
 
-  static Future<void> createSalad(String userId, String appointmentId) async {
+  static Future<void> createSalad(int userId, int appointmentId) async {
     try {
       await supabase.from('salad').insert({
         'user_id': userId,
@@ -24,7 +24,7 @@ class SaladService {
   }
 
   static Future<List<SaladModel>> getSalads(int year, int month) async {
-    final String userId = await AuthUtils.getUserId();
+    final userId = await AuthUtils.getUserId();
     final startDate = DateTime(year, month, 1);
     final endDate = DateTime(year, month + 1, 0);
 
@@ -43,7 +43,7 @@ class SaladService {
     }
   }
 
-  static Future<void> pickUpSalad(String userId) async {
+  static Future<void> pickUpSalad(int userId) async {
     try {
       await supabase.from('salad').update({'state': 'PICKED_UP'}).eq('user_id', userId);
     } catch (e) {
@@ -51,7 +51,7 @@ class SaladService {
     }
   }
 
-  static Future<void> takeHomeSalad(String userId) async {
+  static Future<void> takeHomeSalad(int userId) async {
     try {
       await supabase.from('salad').update({'state': 'TAKE_HOME'}).eq('user_id', userId);
     } catch (e) {
@@ -59,7 +59,7 @@ class SaladService {
     }
   }
 
-  static Future<void> deleteSaladByAppointmentId(String appointmentId) async {
+  static Future<void> deleteSaladByAppointmentId(int appointmentId) async {
     try {
       await supabase.from('salad').delete().eq('appointment_id', appointmentId);
     } catch (e) {

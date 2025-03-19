@@ -1,30 +1,29 @@
 import 'package:koscom_salad/main.dart';
 import 'package:koscom_salad/services/dto/appointment_dto.dart';
 import 'package:koscom_salad/services/models/appointment_model.dart';
-import 'package:koscom_salad/services/salad_service.dart';
 import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/service_utils.dart';
 
 class AppointmentService {
   AppointmentService._();
 
-  static Future<void> createAppointment(AppointmentDto appointmentDto) async {
+  static Future<int> createAppointment(AppointmentDto appointmentDto) async {
     try {
-      final String createdAppointmentId = await supabase
+      final int createdAppointmentId = await supabase
           .from('appointment')
           .insert(appointmentDto.toJson())
           .select()
           .single()
           .then((value) => value['id']);
 
-      // 후처리로 샐러드 생성
-      await SaladService.createSalad(appointmentDto.userId, createdAppointmentId);
+      return createdAppointmentId;
     } catch (e) {
       await ServiceUtils.handleException(e, appointmentDto.toJson());
+      rethrow;
     }
   }
 
-  static Future<AppointmentModel?> getAppointment(String appointmentId) async {
+  static Future<AppointmentModel?> getAppointment(int appointmentId) async {
     try {
       final response = await supabase.from('appointment').select('*').eq('id', appointmentId).single();
 
@@ -35,7 +34,7 @@ class AppointmentService {
     }
   }
 
-  static Future<void> updateAppointment(String appointmentId, AppointmentDto appointmentDto) async {
+  static Future<void> updateAppointment(int appointmentId, AppointmentDto appointmentDto) async {
     try {
       await supabase.from('appointment').update(appointmentDto.toJson()).eq('id', appointmentId);
     } catch (e) {
@@ -43,11 +42,8 @@ class AppointmentService {
     }
   }
 
-  static Future<void> deleteAppointment(String appointmentId) async {
+  static Future<void> deleteAppointment(int appointmentId) async {
     try {
-      // 선처리로 샐러드 삭제
-      await SaladService.deleteSaladByAppointmentId(appointmentId);
-
       await supabase.from('appointment').delete().eq('id', appointmentId);
     } catch (e) {
       await ServiceUtils.handleException(e, {'id': appointmentId});
