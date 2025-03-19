@@ -1,3 +1,5 @@
+import 'package:alarm/alarm.dart';
+import 'package:alarm/utils/alarm_set.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
@@ -6,6 +8,7 @@ import 'package:koscom_salad/services/models/appointment_model.dart';
 import 'package:koscom_salad/services/models/salad_model.dart';
 import 'package:koscom_salad/services/salad_service.dart';
 import 'package:koscom_salad/services/user_service.dart';
+import 'package:koscom_salad/utils/dialog_utils.dart';
 import 'package:koscom_salad/widgets/calendar.dart';
 import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
 import 'package:koscom_salad/services/appointment_service.dart';
@@ -31,6 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
     updateFCMToken();
     refreshAppointments();
+    Alarm.ringing.listen((AlarmSet alarmSet) {
+      for (var alarm in alarmSet.alarms) {
+        DialogUtils.showAlertDialog(
+          ImagePaths.salad,
+          title: alarm.notificationSettings.title,
+          message: alarm.notificationSettings.body,
+          buttonText: '알림 종료',
+          onButtonPressed: () {
+            Alarm.stop(alarm.id);
+            Navigator.pop(context);
+          },
+        );
+      }
+    });
   }
 
   void refreshAppointments() {

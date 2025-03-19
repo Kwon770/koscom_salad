@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:alarm/alarm.dart';
+import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/services/appointment_service.dart';
 import 'package:koscom_salad/services/dto/appointment_dto.dart';
@@ -62,7 +63,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       userId: await AuthUtils.getUserId(),
     );
 
-    final appointmentId = await saveAppointment(dto);
+    await saveAppointment(dto);
     await saveAlarm(dto);
 
     if (mounted) {
@@ -75,7 +76,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     final previousWorkday = await KoreanDateUtils.getPreviousWorkday(dto.date);
     final applyAlarmSettings = AlarmSettings(
       id: int.parse(
-          '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}1'),
+          '${previousWorkday.year}${previousWorkday.month.toString().padLeft(2, '0')}${previousWorkday.day.toString().padLeft(2, '0')}1'),
       dateTime: DateTime(previousWorkday.year, previousWorkday.month, previousWorkday.day, 16, 49),
       notificationSettings: NotificationSettings(
         title: '⏰ 샐러드 신청 알림',
@@ -86,6 +87,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
       assetAudioPath: 'assets/audios/mute.mp3',
+      volumeSettings: VolumeSettings.fixed(volume: 0),
     );
 
     final pickupAlarmSettings = AlarmSettings(
@@ -101,6 +103,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
       assetAudioPath: 'assets/audios/mute.mp3',
+      volumeSettings: VolumeSettings.fixed(volume: 0),
     );
 
     final homeAlarmSettings = AlarmSettings(
@@ -115,6 +118,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
       assetAudioPath: 'assets/audios/mute.mp3',
+      volumeSettings: VolumeSettings.fixed(volume: 0),
     );
 
     await Alarm.set(alarmSettings: applyAlarmSettings);
@@ -122,18 +126,13 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     await Alarm.set(alarmSettings: homeAlarmSettings);
   }
 
-  Future<int> saveAppointment(AppointmentDto dto) async {
-    int appointmentId;
-
+  Future<void> saveAppointment(AppointmentDto dto) async {
     if (widget.isCreate) {
-      appointmentId = await AppointmentService.createAppointment(dto);
+      final appointmentId = await AppointmentService.createAppointment(dto);
       await SaladService.createSalad(dto.userId, appointmentId);
     } else {
-      appointmentId = widget.appointmentId!;
-      await AppointmentService.updateAppointment(appointmentId, dto);
+      await AppointmentService.updateAppointment(widget.appointmentId!, dto);
     }
-
-    return appointmentId;
   }
 
   Future<void> _onDeleteButtonPressed(BuildContext context) async {

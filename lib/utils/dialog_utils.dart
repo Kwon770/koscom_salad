@@ -65,6 +65,7 @@ class DialogUtils {
     required String title,
     required String message,
     String buttonText = '확인',
+    VoidCallback? onButtonPressed,
   }) async {
     await showDialog(
       context: _context,
@@ -75,6 +76,7 @@ class DialogUtils {
         title: title,
         message: message,
         buttonText: buttonText,
+        onButtonPressed: onButtonPressed ?? () => Navigator.pop(context),
       ),
     );
   }

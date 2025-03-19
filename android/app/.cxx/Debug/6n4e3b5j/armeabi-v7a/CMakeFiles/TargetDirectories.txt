@@ -1,0 +1,2 @@
+/Users/chan/code/flutter/koscom_salad/android/app/.cxx/Debug/6n4e3b5j/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/chan/code/flutter/koscom_salad/android/app/.cxx/Debug/6n4e3b5j/armeabi-v7a/CMakeFiles/edit_cache.dir

@@ -5,6 +5,7 @@ class CustomAlertDialog extends StatelessWidget {
   final String title;
   final String message;
   final String buttonText;
+  final VoidCallback onButtonPressed;
 
   const CustomAlertDialog({
     super.key,
@@ -12,6 +13,7 @@ class CustomAlertDialog extends StatelessWidget {
     required this.title,
     required this.message,
     this.buttonText = '확인',
+    required this.onButtonPressed,
   });
 
   @override
@@ -51,7 +53,7 @@ class CustomAlertDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: onButtonPressed,
                 style: TextButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
