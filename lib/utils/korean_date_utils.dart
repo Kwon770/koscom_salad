@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:xml/xml.dart' as xml;
 
@@ -10,18 +9,8 @@ class KoreanDateUtils {
     // 하루 전 날짜 계산
     DateTime previousDay = date.subtract(const Duration(days: 1));
 
-    // 주말 체크 (토요일: 6, 일요일: 7)
-    if (previousDay.weekday == 6) {
-      // 토요일인 경우 금요일로
-      return previousDay.subtract(const Duration(days: 1));
-    } else if (previousDay.weekday == 7) {
-      // 일요일인 경우 금요일로
-      return previousDay.subtract(const Duration(days: 2));
-    }
-
-    // 한국 공휴일 체크
-    bool isHoliday = await _isKoreanHoliday(previousDay);
-    if (isHoliday) {
+    // 주말 및 한국 공휴일 체크
+    if (await isHoliday(previousDay)) {
       // 공휴일인 경우 재귀적으로 이전 평일 찾기
       return getPreviousWorkday(previousDay);
     }
@@ -29,7 +18,14 @@ class KoreanDateUtils {
     return previousDay;
   }
 
-  /// 한국 공휴일 체크 함수
+  static Future<bool> isHoliday(DateTime date) async {
+    if (_isWeekend(date)) {
+      return true;
+    }
+
+    return await _isKoreanHoliday(date);
+  }
+
   static Future<bool> _isKoreanHoliday(DateTime date) async {
     try {
       // 공공데이터포털 API 키 (환경변수에서 가져오기)
@@ -70,34 +66,14 @@ class KoreanDateUtils {
 
         return false;
       } else {
-        // API 요청 실패 시 기본 공휴일 목록으로 체크
-        return _checkDefaultHolidays(date);
+        return false;
       }
     } catch (e) {
-      // 오류 발생 시 기본 공휴일 목록으로 체크
-      return _checkDefaultHolidays(date);
+      return false;
     }
   }
 
-  /// API 호출 실패 시 사용할 기본 공휴일 목록 체크
-  static bool _checkDefaultHolidays(DateTime date) {
-    // 주요 한국 공휴일 목록 (고정 휴일)
-    final fixedHolidays = {
-      '01-01': '신정',
-      '03-01': '삼일절',
-      '05-05': '어린이날',
-      '06-06': '현충일',
-      '08-15': '광복절',
-      '10-03': '개천절',
-      '10-09': '한글날',
-      '12-25': '크리스마스',
-    };
-
-    // 날짜 포맷 (MM-dd)
-    final formatter = DateFormat('MM-dd');
-    final formattedDate = formatter.format(date);
-
-    // 고정 휴일 체크
-    return fixedHolidays.containsKey(formattedDate);
+  static bool _isWeekend(DateTime date) {
+    return date.weekday == 6 || date.weekday == 7;
   }
 }

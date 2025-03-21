@@ -3,6 +3,7 @@ import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/constants/salad_state.dart';
 import 'package:koscom_salad/services/models/salad_model.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
+import 'package:koscom_salad/utils/korean_date_utils.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime) onDateChanged;
@@ -129,60 +130,83 @@ class _CalendarState extends State<Calendar> {
             .where((s) => s.date.year == date.year && s.date.month == date.month && s.date.day == date.day)
             .firstOrNull;
 
-        return _makeCell(date, salad);
+        // FutureBuilder를 사용하여 Future<Widget>을 Widget으로 변환
+        return FutureBuilder<Widget>(
+          future: _makeCell(date, salad),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+              return snapshot.data!;
+            }
+            return const SizedBox.shrink(); // 로딩 중일 때 표시할 위젯
+          },
+        );
       },
     );
   }
 
-  Widget _makeCell(DateTime date, SaladModel? salad) {
-    final isPastDate =
-        date.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)); // 0시 0분 기준
-    const size = 36.0;
+  Future<Widget> _makeCell(DateTime date, SaladModel? salad) async {
+    final isHoliday = await KoreanDateUtils.isHoliday(date);
+    const iconSize = 36.0;
 
-    // 과거 날짜이고 예약된 샐러드가 없는 경우
-    if (isPastDate && salad == null) {
-      final icon = _buildSaladImage(
-        size: size,
-        filterColor: const Color(0xfff4f4f4),
-        blendMode: BlendMode.srcIn,
-      );
-      return _buildCell(icon, date);
-    }
-
-    // 미래 날짜이고 예약된 샐러드가 없는 경우
-    if (!isPastDate && salad == null) {
-      final icon = _buildSaladImage(
-        size: size,
-        opacity: 0.3,
-      );
-      return _buildCell(
-        icon,
-        date,
-        onTap: () => DialogUtils.showAppointmentCreateDialog(
-          date,
-          onComplete: widget.onAppointmentCreated,
-        ),
-      );
+    // 예약된 샐러드가 없는경우
+    if (salad == null) {
+      final isPastThanDate = date.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1));
+      if (isHoliday || isPastThanDate) {
+        return _buildGrayCell(iconSize, date);
+      } else {
+        return _buildTransparentSaladCell(iconSize, date);
+      }
     }
 
     // 예약된 샐러드가 있는 경우
+    return _buildSolidSaladCell(iconSize, salad, date);
+  }
+
+  Widget _buildSolidSaladCell(double iconSize, SaladModel salad, DateTime date) {
+    final isPastEqualThanToday = date.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
     final icon = _buildSaladImage(
-      size: size,
-      filterColor: salad?.state == SaladState.spoiled ? const Color.fromARGB(255, 162, 1, 206) : null,
-      blendMode: salad?.state == SaladState.spoiled ? BlendMode.modulate : null,
+      size: iconSize,
+      filterColor: salad.state == SaladState.spoiled ? const Color.fromARGB(255, 162, 1, 206) : null,
+      blendMode: salad.state == SaladState.spoiled ? BlendMode.modulate : null,
     );
 
     return _buildCell(
       icon,
       date,
-      onTap: !isPastDate
+      onTap: !isPastEqualThanToday
           ? () => DialogUtils.showAppointmentEditDialog(
                 date,
-                salad!.appointmentId,
+                salad.appointmentId,
                 onComplete: widget.onAppointmentCreated,
               )
           : null,
     );
+  }
+
+  Widget _buildTransparentSaladCell(double size, DateTime date) {
+    final icon = _buildSaladImage(
+      size: size,
+      opacity: 0.3,
+    );
+
+    return _buildCell(
+      icon,
+      date,
+      onTap: () => DialogUtils.showAppointmentCreateDialog(
+        date,
+        onComplete: widget.onAppointmentCreated,
+      ),
+    );
+  }
+
+  Widget _buildGrayCell(double size, DateTime date) {
+    final icon = _buildSaladImage(
+      size: size,
+      filterColor: const Color(0xfff4f4f4),
+      blendMode: BlendMode.srcIn,
+    );
+
+    return _buildCell(icon, date);
   }
 
   // 날짜 텍스트 위젯 생성
