@@ -96,20 +96,27 @@ class _SettingScreenState extends State<SettingScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('설정'),
-        backgroundColor: Colors.white,
+        title: const Text(
+          '설정',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF17522F)))
           : ListView(
               children: [
                 ListTile(
                   title: Text(_userName),
                   subtitle: Text(
                     '내 정보 수정하기',
-                    style: TextStyle(color: Colors.black.withOpacity(0.5)),
+                    style: TextStyle(
+                      color: Colors.black.withOpacity(0.5),
+                    ),
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: handleNameChange,
