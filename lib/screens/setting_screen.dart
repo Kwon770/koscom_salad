@@ -4,7 +4,7 @@ import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:koscom_salad/utils/webhook_agent.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 import 'package:koscom_salad/main.dart';
-import 'package:koscom_salad/screens/onboarding_screen.dart';
+import 'package:koscom_salad/screens/auth_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -85,7 +85,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
     if (mounted) {
       navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        MaterialPageRoute(builder: (context) => const AuthScreen()),
         (route) => false,
       );
     }

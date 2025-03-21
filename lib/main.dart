@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/firebase_options.dart';
 import 'package:koscom_salad/screens/home_screen.dart';
-import 'package:koscom_salad/screens/onboarding_screen.dart';
+import 'package:koscom_salad/screens/auth_screen.dart';
 import 'package:koscom_salad/utils/auth_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
           }
 
           // userId가 없으면 온보딩 화면으로
-          return snapshot.hasData ? const HomeScreen() : const OnboardingScreen();
+          return snapshot.hasData ? const HomeScreen() : const AuthScreen();
         },
       ),
     );
