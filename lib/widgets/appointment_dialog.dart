@@ -74,56 +74,71 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
 
   Future<void> saveAlarm(AppointmentDto dto) async {
     final previousWorkday = await KoreanDateUtils.getPreviousWorkday(dto.date);
-    final applyAlarmSettings = AlarmSettings(
-      id: int.parse(
-          '${previousWorkday.year}${previousWorkday.month.toString().padLeft(2, '0')}${previousWorkday.day.toString().padLeft(2, '0')}1'),
-      dateTime: DateTime(previousWorkday.year, previousWorkday.month, previousWorkday.day, 16, 49),
-      notificationSettings: NotificationSettings(
-        title: '⏰ 샐러드 신청 알림',
-        body: '1분 뒤 샐러드 신청이 시작됩니다!',
-        stopButton: '알림 종료',
-      ),
-      vibrate: true,
-      warningNotificationOnKill: Platform.isIOS,
-      androidFullScreenIntent: true,
-      assetAudioPath: 'assets/audios/mute.mp3',
-      volumeSettings: VolumeSettings.fixed(volume: 0),
-    );
+    final applyAlarmId = int.parse(
+        '${previousWorkday.year}${previousWorkday.month.toString().padLeft(2, '0')}${previousWorkday.day.toString().padLeft(2, '0')}1');
+    final pickupAlarmId = int.parse(
+        '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}2');
+    final homeAlarmId = int.parse(
+        '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}3');
 
-    final pickupAlarmSettings = AlarmSettings(
-      id: int.parse(
-          '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}2'),
-      dateTime: DateTime(dto.date.year, dto.date.month, dto.date.day, 12, 20),
-      notificationSettings: NotificationSettings(
-        title: '🏃 샐러드 픽업 알림 제목',
-        body: '식당에서 샐러드 픽업해가세요!',
-        stopButton: '알림 종료',
-      ),
-      vibrate: true,
-      warningNotificationOnKill: Platform.isIOS,
-      androidFullScreenIntent: true,
-      assetAudioPath: 'assets/audios/mute.mp3',
-      volumeSettings: VolumeSettings.fixed(volume: 0),
-    );
+    if (notifyOnApply) {
+      final applyAlarmSettings = AlarmSettings(
+        id: applyAlarmId,
+        dateTime: DateTime(previousWorkday.year, previousWorkday.month, previousWorkday.day, 16, 49),
+        notificationSettings: NotificationSettings(
+          title: '⏰ 샐러드 신청 알림',
+          body: '1분 뒤 샐러드 신청이 시작됩니다!',
+          stopButton: '알림 종료',
+        ),
+        vibrate: true,
+        warningNotificationOnKill: Platform.isIOS,
+        androidFullScreenIntent: true,
+        assetAudioPath: 'assets/audios/mute.mp3',
+        volumeSettings: VolumeSettings.fixed(volume: 0),
+      );
+      await Alarm.set(alarmSettings: applyAlarmSettings);
+    } else {
+      await Alarm.stop(applyAlarmId);
+    }
 
-    final homeAlarmSettings = AlarmSettings(
-      id: int.parse(
-          '${dto.date.year}${dto.date.month.toString().padLeft(2, '0')}${dto.date.day.toString().padLeft(2, '0')}3'),
-      dateTime: DateTime(dto.date.year, dto.date.month, dto.date.day, 17, 39),
-      notificationSettings: NotificationSettings(
-        title: '🏠 샐러드 챙기기 알림 제목',
-        body: '샐러드 챙기기 알림 내용',
-      ),
-      vibrate: true,
-      warningNotificationOnKill: Platform.isIOS,
-      androidFullScreenIntent: true,
-      assetAudioPath: 'assets/audios/mute.mp3',
-      volumeSettings: VolumeSettings.fixed(volume: 0),
-    );
+    if (notifyOnPickup) {
+      final pickupAlarmSettings = AlarmSettings(
+        id: pickupAlarmId,
+        dateTime: DateTime(dto.date.year, dto.date.month, dto.date.day, 12, 20),
+        notificationSettings: NotificationSettings(
+          title: '🏃 샐러드 픽업 알림 제목',
+          body: '식당에서 샐러드 픽업해가세요!',
+          stopButton: '알림 종료',
+        ),
+        vibrate: true,
+        warningNotificationOnKill: Platform.isIOS,
+        androidFullScreenIntent: true,
+        assetAudioPath: 'assets/audios/mute.mp3',
+        volumeSettings: VolumeSettings.fixed(volume: 0),
+      );
+      await Alarm.set(alarmSettings: pickupAlarmSettings);
+    } else {
+      await Alarm.stop(pickupAlarmId);
+    }
 
-    await Alarm.set(alarmSettings: applyAlarmSettings);
-    await Alarm.set(alarmSettings: pickupAlarmSettings);
-    await Alarm.set(alarmSettings: homeAlarmSettings);
+    if (notifyOnHome) {
+      final homeAlarmSettings = AlarmSettings(
+        id: homeAlarmId,
+        dateTime: DateTime(dto.date.year, dto.date.month, dto.date.day, 17, 39),
+        notificationSettings: NotificationSettings(
+          title: '🏠 샐러드 챙기기 알림 제목',
+          body: '샐러드 챙기기 알림 내용',
+        ),
+        vibrate: true,
+        warningNotificationOnKill: Platform.isIOS,
+        androidFullScreenIntent: true,
+        assetAudioPath: 'assets/audios/mute.mp3',
+        volumeSettings: VolumeSettings.fixed(volume: 0),
+      );
+      await Alarm.set(alarmSettings: homeAlarmSettings);
+    } else {
+      await Alarm.stop(homeAlarmId);
+    }
   }
 
   Future<void> saveAppointment(AppointmentDto dto) async {
@@ -146,7 +161,8 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
 
     if (confirmed == false || !mounted) return;
 
-    await deleteAppointment();
+    await SaladService.deleteSalad(widget.appointmentId!);
+    await AppointmentService.deleteAppointment(widget.appointmentId!);
     await deleteAlarm();
 
     if (mounted) {
@@ -169,11 +185,6 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     await Alarm.stop(
       int.parse('${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}3'),
     );
-  }
-
-  Future<void> deleteAppointment() async {
-    await SaladService.deleteSaladByAppointmentId(widget.appointmentId!);
-    await AppointmentService.deleteAppointment(widget.appointmentId!);
   }
 
   @override
