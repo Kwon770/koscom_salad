@@ -144,7 +144,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       noText: '취소',
     );
 
-    if (!confirmed || !mounted) return;
+    if (confirmed == false || !mounted) return;
 
     await deleteAppointment();
     await deleteAlarm();

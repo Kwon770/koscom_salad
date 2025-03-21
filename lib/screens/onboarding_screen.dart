@@ -108,7 +108,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             noText: '취소',
                           );
 
-                          if (confirmed) {
+                          if (confirmed!) {
                             await _registerUser();
                           }
                         },

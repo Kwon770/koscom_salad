@@ -79,7 +79,7 @@ class _SettingScreenState extends State<SettingScreen> {
       noText: '취소',
     );
 
-    if (!confirmed) return;
+    if (confirmed == false) return;
     await UserService.deleteUserSoftly();
     await AuthUtils.removeUserId();
 

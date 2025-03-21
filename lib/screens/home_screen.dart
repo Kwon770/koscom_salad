@@ -28,12 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     FirebaseMessaging.instance.onTokenRefresh.listen((token) {
       updateFCMToken();
     });
 
-    updateFCMToken();
-    refreshAppointments();
     Alarm.ringing.listen((AlarmSet alarmSet) {
       for (var alarm in alarmSet.alarms) {
         DialogUtils.showAlertDialog(
@@ -48,6 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+
+    updateFCMToken();
+    refreshAppointments();
   }
 
   void refreshAppointments() {

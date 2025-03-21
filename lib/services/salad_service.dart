@@ -43,19 +43,43 @@ class SaladService {
     }
   }
 
-  static Future<void> pickUpSalad(int userId) async {
+  static Future<void> applySalad(int saladId) async {
     try {
-      await supabase.from('salad').update({'state': 'PICKED_UP'}).eq('user_id', userId);
+      await supabase.from('salad').update({'state': 'applied'}).eq('id', saladId);
     } catch (e) {
-      await ServiceUtils.handleException(e, {'user_id': userId});
+      await ServiceUtils.handleException(e, {'salad_id': saladId});
     }
   }
 
-  static Future<void> takeHomeSalad(int userId) async {
+  static Future<void> pickUpSalad(int saladId) async {
     try {
-      await supabase.from('salad').update({'state': 'TAKE_HOME'}).eq('user_id', userId);
+      await supabase.from('salad').update({'state': 'pickedUp'}).eq('id', saladId);
     } catch (e) {
-      await ServiceUtils.handleException(e, {'user_id': userId});
+      await ServiceUtils.handleException(e, {'salad_id': saladId});
+    }
+  }
+
+  static Future<void> takeHomeSalad(int saladId) async {
+    try {
+      await supabase.from('salad').update({'state': 'takeHome'}).eq('id', saladId);
+    } catch (e) {
+      await ServiceUtils.handleException(e, {'salad_id': saladId});
+    }
+  }
+
+  static Future<void> spoilSalad(int saladId) async {
+    try {
+      await supabase.from('salad').update({'state': 'spoiled'}).eq('id', saladId);
+    } catch (e) {
+      await ServiceUtils.handleException(e, {'salad_id': saladId});
+    }
+  }
+
+  static Future<void> deleteSalad(int saladId) async {
+    try {
+      await supabase.from('salad').delete().eq('id', saladId);
+    } catch (e) {
+      await ServiceUtils.handleException(e, {'salad_id': saladId});
     }
   }
 

@@ -3,6 +3,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:xml/xml.dart' as xml;
 
 class KoreanDateUtils {
+  static bool isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
   /// 주어진 날짜의 전날을 반환합니다.
   /// 만약 전날이 주말이나 한국 공휴일인 경우, 파라미터 날짜로부터 가장 가까운 평일을 반환합니다.
   static Future<DateTime> getPreviousWorkday(DateTime date) async {

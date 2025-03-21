@@ -37,17 +37,17 @@ class DialogUtils {
     );
   }
 
-  static Future<bool> showYesOrNoDialog(
+  static Future<bool?> showYesOrNoDialog(
     String? iconPath, {
     required String title,
     required String message,
     String yesText = '예',
     String noText = '아니오',
   }) async {
-    final result = await showDialog<bool>(
+    final result = await showDialog<bool?>(
       context: _context,
       barrierColor: Colors.black54,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => YesOrNoDialog(
         iconPath: iconPath,
         title: title,
@@ -57,7 +57,7 @@ class DialogUtils {
       ),
     );
 
-    return result ?? false;
+    return result;
   }
 
   static Future<void> showAlertDialog(
@@ -70,7 +70,7 @@ class DialogUtils {
     await showDialog(
       context: _context,
       barrierColor: Colors.black54,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => CustomAlertDialog(
         iconPath: iconPath,
         title: title,
@@ -86,6 +86,8 @@ class DialogUtils {
 
     await showDialog(
       context: _context,
+      barrierColor: Colors.black54,
+      barrierDismissible: true,
       builder: (context) => AlertDialog(
         content: Text(errorMessage),
         actions: [
@@ -110,6 +112,7 @@ class DialogUtils {
     final result = await showDialog<String?>(
       context: _context,
       barrierColor: Colors.black54,
+      barrierDismissible: true,
       builder: (context) => SimpleInputDialog(
         title: title,
         hintText: hintText,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:koscom_salad/constants/image_paths.dart';
 import 'package:koscom_salad/constants/salad_state.dart';
+import 'package:koscom_salad/services/appointment_service.dart';
 import 'package:koscom_salad/services/models/salad_model.dart';
+import 'package:koscom_salad/services/salad_service.dart';
 import 'package:koscom_salad/utils/dialog_utils.dart';
 import 'package:koscom_salad/utils/korean_date_utils.dart';
 
@@ -21,13 +23,14 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => _CalendarState();
 }
 
-class _CalendarState extends State<Calendar> {
+class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   // 현재 달을 기준으로 앞뒤로 2년씩 표시할 수 있도록 설정
   static const int totalMonths = 48;
   static const int initialPage = totalMonths ~/ 2; // 중간 페이지에서 시작
 
   late DateTime _calendarPageDay;
   late PageController _calendarPageController;
+  final Map<DateTime, AnimationController> _animationControllers = {};
 
   @override
   void initState() {
@@ -39,6 +42,16 @@ class _CalendarState extends State<Calendar> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.onDateChanged(_calendarPageDay);
     });
+  }
+
+  @override
+  void dispose() {
+    // 모든 애니메이션 컨트롤러 해제
+    for (final controller in _animationControllers.values) {
+      controller.dispose();
+    }
+    _animationControllers.clear();
+    super.dispose();
   }
 
   DateTime getDateFromIndex(int index) {
@@ -162,24 +175,146 @@ class _CalendarState extends State<Calendar> {
     return _buildSolidSaladCell(iconSize, salad, date);
   }
 
-  Widget _buildSolidSaladCell(double iconSize, SaladModel salad, DateTime date) {
-    final isPastEqualThanToday = date.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+  Future<Widget> _buildSolidSaladCell(double iconSize, SaladModel salad, DateTime date) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final isPastEqualThanToday = date.isBefore(today) || KoreanDateUtils.isSameDay(date, today);
+
+    // 현재 시간 가져오기
+    final currentTime = TimeOfDay.fromDateTime(now);
+    final currentTimeInMinutes = currentTime.hour * 60 + currentTime.minute;
+
+    // 애니메이션이 필요한 조건 확인
+    bool needsAnimation = false;
+    VoidCallback? onTapAction;
+
+    if (salad.state == SaladState.spoiled || salad.state == SaladState.takeHome) {
+      // spoiled, takeHome 상태인 경우, 더 이상 액션 없음
+    }
+    // 1. "샐러드를 신청하셨나요?" 조건
+    else if (KoreanDateUtils.isSameDay(await KoreanDateUtils.getPreviousWorkday(date), today) &&
+        salad.state == SaladState.booked &&
+        currentTimeInMinutes > (16 * 60 + 49)) {
+      needsAnimation = true;
+      onTapAction = () async {
+        // 샐러드 신청 관련 액션
+        bool? applyResult = await DialogUtils.showYesOrNoDialog(
+          ImagePaths.salad,
+          title: "샐러드 신청하셨나요?",
+          message: "",
+          yesText: "신청 성공했다",
+          noText: "신청 실패했다",
+        );
+
+        if (applyResult == true) {
+          await SaladService.applySalad(salad.id);
+          widget.onAppointmentCreated();
+        } else if (applyResult == false) {
+          await SaladService.deleteSalad(salad.id);
+          await AppointmentService.deleteAppointment(salad.appointmentId);
+          widget.onAppointmentCreated();
+        }
+      };
+    }
+    // 2. "샐러드를 픽업하셨나요?" 조건
+    else if (KoreanDateUtils.isSameDay(date, today) &&
+        (salad.state == SaladState.booked || salad.state == SaladState.applied) &&
+        currentTimeInMinutes > (12 * 60 + 20)) {
+      needsAnimation = true;
+      onTapAction = () async {
+        // 샐러드 픽업 관련 액션
+        bool? pickedupResult = await DialogUtils.showYesOrNoDialog(
+          ImagePaths.salad,
+          title: "샐러드 픽업하셨나요?",
+          message: "",
+          yesText: "픽업 및 양도했다",
+          noText: "깜빡해서 폐기됬다",
+        );
+
+        if (pickedupResult == true) {
+          await SaladService.pickUpSalad(salad.id);
+          widget.onAppointmentCreated();
+        } else if (pickedupResult == false) {
+          await SaladService.spoilSalad(salad.id);
+          widget.onAppointmentCreated();
+        }
+      };
+    }
+    // 3. "샐러드를 챙기셨나요?" 조건
+    else if ((KoreanDateUtils.isSameDay(date, today) &&
+            (salad.state == SaladState.applied || salad.state == SaladState.pickedUp) &&
+            currentTimeInMinutes > (17 * 60 + 40)) ||
+        (date.isBefore(today) && (salad.state == SaladState.booked || salad.state == SaladState.pickedUp))) {
+      needsAnimation = true;
+      onTapAction = () async {
+        // 샐러드 챙기기 관련 액션
+        bool? takehomeResult = await DialogUtils.showYesOrNoDialog(
+          ImagePaths.salad,
+          title: "샐러드 챙기셨나요?",
+          message: "",
+          yesText: "챙겼다",
+          noText: "회사에 두고왔다...",
+        );
+
+        if (takehomeResult == true) {
+          await SaladService.takeHomeSalad(salad.id);
+          widget.onAppointmentCreated();
+        } else if (takehomeResult == false) {
+          await SaladService.spoilSalad(salad.id);
+          widget.onAppointmentCreated();
+        }
+      };
+    }
+    // 일반적인 경우
+    else if (!isPastEqualThanToday) {
+      onTapAction = () => DialogUtils.showAppointmentEditDialog(
+            date,
+            salad.appointmentId,
+            onComplete: widget.onAppointmentCreated,
+          );
+    }
+
+    // 애니메이션 컨트롤러 생성 또는 가져오기
+    if (needsAnimation && !_animationControllers.containsKey(date)) {
+      _animationControllers[date] = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 800),
+      )..repeat(reverse: true);
+    } else if (!needsAnimation && _animationControllers.containsKey(date)) {
+      _animationControllers[date]!.dispose();
+      _animationControllers.remove(date);
+    }
+
+    // 아이콘 생성
     final icon = _buildSaladImage(
       size: iconSize,
       filterColor: salad.state == SaladState.spoiled ? const Color.fromARGB(255, 162, 1, 206) : null,
       blendMode: salad.state == SaladState.spoiled ? BlendMode.modulate : null,
     );
 
+    // 애니메이션 적용 - 더 크고 빠르게
+    Widget finalIcon = icon;
+    if (needsAnimation && _animationControllers.containsKey(date)) {
+      // 애니메이션 속도 조정
+      _animationControllers[date]!.duration = const Duration(milliseconds: 500);
+
+      finalIcon = AnimatedBuilder(
+        animation: _animationControllers[date]!,
+        builder: (context, child) {
+          return Transform.scale(
+            // 스케일 범위를 0.8에서 1.4로 확장 (더 크게)
+            scale: 1.0 + 0.3 * _animationControllers[date]!.value,
+            child: child,
+          );
+        },
+        child: icon,
+      );
+    }
+
     return _buildCell(
-      icon,
+      finalIcon,
       date,
-      onTap: !isPastEqualThanToday
-          ? () => DialogUtils.showAppointmentEditDialog(
-                date,
-                salad.appointmentId,
-                onComplete: widget.onAppointmentCreated,
-              )
-          : null,
+      onTap: onTapAction,
     );
   }
 
