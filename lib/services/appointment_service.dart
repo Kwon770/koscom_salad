@@ -50,11 +50,16 @@ class AppointmentService {
     }
   }
 
-  static Future<List<AppointmentModel>> getAppointments() async {
+  static Future<List<AppointmentModel>> getUpcomingAppointments() async {
     try {
       final userId = await AuthUtils.getUserId();
-      final response =
-          await supabase.from('appointment').select('*').eq('user_id', userId).order('date', ascending: true);
+      final response = await supabase
+          .from('appointment')
+          .select('*')
+          .eq('user_id', userId)
+          .gte('date',
+              DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toIso8601String()) // 0시 0분 기준
+          .order('date', ascending: true);
 
       return response.map((json) => AppointmentModel.fromJson(json)).toList();
     } catch (e) {

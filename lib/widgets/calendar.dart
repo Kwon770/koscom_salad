@@ -135,7 +135,8 @@ class _CalendarState extends State<Calendar> {
   }
 
   Widget _makeCell(DateTime date, SaladModel? salad) {
-    final isPastDate = date.isBefore(DateTime.now());
+    final isPastDate =
+        date.isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)); // 0시 0분 기준
     const size = 36.0;
 
     // 과거 날짜이고 예약된 샐러드가 없는 경우

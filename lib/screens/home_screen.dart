@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void refreshAppointments() {
     setState(() {
-      _appointmentsFuture = AppointmentService.getAppointments();
+      _appointmentsFuture = AppointmentService.getUpcomingAppointments();
       _saladsFuture = SaladService.getSalads(_currentDate.year, _currentDate.month);
     });
   }
