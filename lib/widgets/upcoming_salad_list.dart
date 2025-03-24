@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:koscom_salad/services/models/appointment_model.dart';
-import 'package:koscom_salad/utils/dialog_utils.dart';
+import 'package:koscomsalad/services/models/appointment_model.dart';
+import 'package:koscomsalad/utils/dialog_utils.dart';
 
 class UpcomingSaladList extends StatelessWidget {
   final Future<List<AppointmentModel>> appointmentsFuture;

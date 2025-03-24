@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/screens/home_screen.dart';
+import 'package:koscomsalad/screens/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

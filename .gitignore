@@ -46,3 +46,7 @@ app.*.map.json
 
 .env
 /supabase/functions/service-account.json
+
+key.properties
+**/*.keystore
+**/*.jks

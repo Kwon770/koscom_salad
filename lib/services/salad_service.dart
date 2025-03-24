@@ -1,7 +1,7 @@
-import 'package:koscom_salad/main.dart';
-import 'package:koscom_salad/services/models/salad_model.dart';
-import 'package:koscom_salad/utils/auth_utils.dart';
-import 'package:koscom_salad/utils/service_utils.dart';
+import 'package:koscomsalad/main.dart';
+import 'package:koscomsalad/services/models/salad_model.dart';
+import 'package:koscomsalad/utils/auth_utils.dart';
+import 'package:koscomsalad/utils/service_utils.dart';
 
 // saladState enum = state column table
 // booked

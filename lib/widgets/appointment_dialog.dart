@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:alarm/alarm.dart';
 import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/services/appointment_service.dart';
-import 'package:koscom_salad/services/dto/appointment_dto.dart';
-import 'package:koscom_salad/services/salad_service.dart';
-import 'package:koscom_salad/utils/korean_date_utils.dart';
-import 'package:koscom_salad/utils/auth_utils.dart';
-import 'package:koscom_salad/utils/dialog_utils.dart';
+import 'package:koscomsalad/services/appointment_service.dart';
+import 'package:koscomsalad/services/dto/appointment_dto.dart';
+import 'package:koscomsalad/services/salad_service.dart';
+import 'package:koscomsalad/utils/korean_date_utils.dart';
+import 'package:koscomsalad/utils/auth_utils.dart';
+import 'package:koscomsalad/utils/dialog_utils.dart';
 
 class AppointmentDialog extends StatefulWidget {
   final DateTime date;

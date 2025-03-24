@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:259021322907:android:3e81fb9d3cdb8c2e2b243e",
+        "mobilesdk_app_id": "1:259021322907:android:77dab10df0f1ba2d2b243e",
         "android_client_info": {
-          "package_name": "com.example.koscom_salad"
+          "package_name": "com.sckwon770.koscomsalad"
         }
       },
       "oauth_client": [],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/main.dart';
-import 'package:koscom_salad/widgets/appointment_dialog.dart';
-import 'package:koscom_salad/widgets/yes_or_no_dialog.dart';
-import 'package:koscom_salad/widgets/alert_dialog.dart';
-import 'package:koscom_salad/widgets/simple_input_dialog.dart';
+import 'package:koscomsalad/main.dart';
+import 'package:koscomsalad/widgets/appointment_dialog.dart';
+import 'package:koscomsalad/widgets/yes_or_no_dialog.dart';
+import 'package:koscomsalad/widgets/alert_dialog.dart';
+import 'package:koscomsalad/widgets/simple_input_dialog.dart';
 
 class DialogUtils {
   DialogUtils._();

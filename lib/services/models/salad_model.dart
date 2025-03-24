@@ -1,4 +1,4 @@
-import 'package:koscom_salad/constants/salad_state.dart';
+import 'package:koscomsalad/constants/salad_state.dart';
 
 class SaladModel {
   final int id;

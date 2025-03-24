@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/services/user_service.dart';
-import 'package:koscom_salad/utils/auth_utils.dart';
-import 'package:koscom_salad/utils/webhook_agent.dart';
-import 'package:koscom_salad/utils/dialog_utils.dart';
-import 'package:koscom_salad/main.dart';
-import 'package:koscom_salad/screens/auth_screen.dart';
+import 'package:koscomsalad/services/user_service.dart';
+import 'package:koscomsalad/utils/auth_utils.dart';
+import 'package:koscomsalad/utils/webhook_agent.dart';
+import 'package:koscomsalad/utils/dialog_utils.dart';
+import 'package:koscomsalad/main.dart';
+import 'package:koscomsalad/screens/auth_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});

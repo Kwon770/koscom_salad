@@ -1,6 +1,6 @@
-import 'package:koscom_salad/main.dart';
-import 'package:koscom_salad/utils/auth_utils.dart';
-import 'package:koscom_salad/utils/service_utils.dart';
+import 'package:koscomsalad/main.dart';
+import 'package:koscomsalad/utils/auth_utils.dart';
+import 'package:koscomsalad/utils/service_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {

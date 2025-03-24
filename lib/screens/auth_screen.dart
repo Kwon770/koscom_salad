@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/screens/onboarding_screen.dart';
-import 'package:koscom_salad/services/user_service.dart';
-import 'package:koscom_salad/utils/auth_utils.dart';
-import 'package:koscom_salad/utils/dialog_utils.dart';
+import 'package:koscomsalad/screens/onboarding_screen.dart';
+import 'package:koscomsalad/services/user_service.dart';
+import 'package:koscomsalad/utils/auth_utils.dart';
+import 'package:koscomsalad/utils/dialog_utils.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

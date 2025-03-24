@@ -1,10 +1,10 @@
 import 'package:alarm/alarm.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/firebase_options.dart';
-import 'package:koscom_salad/screens/home_screen.dart';
-import 'package:koscom_salad/screens/auth_screen.dart';
-import 'package:koscom_salad/utils/auth_utils.dart';
+import 'package:koscomsalad/firebase_options.dart';
+import 'package:koscomsalad/screens/home_screen.dart';
+import 'package:koscomsalad/screens/auth_screen.dart';
+import 'package:koscomsalad/utils/auth_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

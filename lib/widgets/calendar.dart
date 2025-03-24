@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/constants/image_paths.dart';
-import 'package:koscom_salad/constants/salad_state.dart';
-import 'package:koscom_salad/services/appointment_service.dart';
-import 'package:koscom_salad/services/models/salad_model.dart';
-import 'package:koscom_salad/services/salad_service.dart';
-import 'package:koscom_salad/utils/dialog_utils.dart';
-import 'package:koscom_salad/utils/korean_date_utils.dart';
+import 'package:koscomsalad/constants/image_paths.dart';
+import 'package:koscomsalad/constants/salad_state.dart';
+import 'package:koscomsalad/services/appointment_service.dart';
+import 'package:koscomsalad/services/models/salad_model.dart';
+import 'package:koscomsalad/services/salad_service.dart';
+import 'package:koscomsalad/utils/dialog_utils.dart';
+import 'package:koscomsalad/utils/korean_date_utils.dart';
 
 class Calendar extends StatefulWidget {
   final Function(DateTime) onDateChanged;

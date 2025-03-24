@@ -62,6 +62,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '259021322907',
     projectId: 'koscom-salad-fca91',
     storageBucket: 'koscom-salad-fca91.firebasestorage.app',
-    iosBundleId: 'com.example.koscomSalad',
+    iosBundleId: 'com.sckwon770.koscomSalad',
   );
 }

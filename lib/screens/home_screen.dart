@@ -2,16 +2,16 @@ import 'package:alarm/alarm.dart';
 import 'package:alarm/utils/alarm_set.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:koscom_salad/constants/image_paths.dart';
-import 'package:koscom_salad/screens/setting_screen.dart';
-import 'package:koscom_salad/services/models/appointment_model.dart';
-import 'package:koscom_salad/services/models/salad_model.dart';
-import 'package:koscom_salad/services/salad_service.dart';
-import 'package:koscom_salad/services/user_service.dart';
-import 'package:koscom_salad/utils/dialog_utils.dart';
-import 'package:koscom_salad/widgets/calendar.dart';
-import 'package:koscom_salad/widgets/upcoming_salad_list.dart';
-import 'package:koscom_salad/services/appointment_service.dart';
+import 'package:koscomsalad/constants/image_paths.dart';
+import 'package:koscomsalad/screens/setting_screen.dart';
+import 'package:koscomsalad/services/models/appointment_model.dart';
+import 'package:koscomsalad/services/models/salad_model.dart';
+import 'package:koscomsalad/services/salad_service.dart';
+import 'package:koscomsalad/services/user_service.dart';
+import 'package:koscomsalad/utils/dialog_utils.dart';
+import 'package:koscomsalad/widgets/calendar.dart';
+import 'package:koscomsalad/widgets/upcoming_salad_list.dart';
+import 'package:koscomsalad/services/appointment_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
