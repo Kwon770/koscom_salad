@@ -84,7 +84,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     if (notifyOnApply) {
       final applyAlarmSettings = AlarmSettings(
         id: applyAlarmId,
-        dateTime: DateTime(previousWorkday.year, previousWorkday.month, previousWorkday.day, 16, 49),
+        dateTime: DateTime(previousWorkday.year, previousWorkday.month, previousWorkday.day, 16, 59),
         notificationSettings: NotificationSettings(
           title: '⏰ 샐러드 신청 알림',
           body: '1분 뒤 샐러드 신청이 시작됩니다!',
@@ -236,7 +236,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                     const SizedBox(height: 16),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('샐러드 신청 알림 \n(전일 16:49)'),
+                      title: const Text('샐러드 신청 알림 \n(전일 16:59)'),
                       trailing: Switch.adaptive(
                         value: notifyOnApply,
                         onChanged: (value) {

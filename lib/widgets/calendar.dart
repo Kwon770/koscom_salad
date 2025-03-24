@@ -194,7 +194,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     // 1. "샐러드를 신청하셨나요?" 조건
     else if (KoreanDateUtils.isSameDay(await KoreanDateUtils.getPreviousWorkday(date), today) &&
         salad.state == SaladState.booked &&
-        currentTimeInMinutes > (16 * 60 + 49)) {
+        currentTimeInMinutes > (16 * 60 + 59)) {
       needsAnimation = true;
       onTapAction = () async {
         // 샐러드 신청 관련 액션
